@@ -139,7 +139,7 @@ public class Search {
 		} catch (Exception e) {
 			results = new Response();
 			results.setStatusCode(500);
-			results.setStatusMessage(e.getMessage());
+			results.setStatusMessage("Failed to parse the response body");
 			results.setSuccess(false);
 		}
 		return results;
