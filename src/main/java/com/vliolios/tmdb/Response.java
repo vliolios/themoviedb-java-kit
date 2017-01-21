@@ -11,10 +11,10 @@ import java.util.List;
  *
  * @author vliolios
  */
-public class Response {
+public class Response<T> {
 
     private Integer page;
-    private List<Result> results;
+    private List<T> results;
     private Integer totalResults;
     private Integer totalPages;
 
@@ -30,11 +30,11 @@ public class Response {
     	this.page = page;
     }
 
-    public List<Result> getResults() {
+    public List<T> getResults() {
     	return results;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(List<T> results) {
     	this.results = results;
     }
 

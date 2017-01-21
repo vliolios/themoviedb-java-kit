@@ -17,7 +17,7 @@ public class API {
     	this.apiKey = apiKey;
     }
 
-    public Search search() {
-    	return new Search(apiKey);
+	public <T extends Search<T, X>, X extends Result> T search(Class<T> clazz) {
+		return clazz.cast(clazz.equals(TVSearch.class) ? new TVSearch(apiKey) : new MovieSearch(apiKey));
     }
 }
