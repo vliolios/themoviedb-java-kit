@@ -9,6 +9,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
@@ -16,28 +17,12 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
  *
  * @author vliolios
  */
-public class Search { 
+public abstract class Search<T extends Search<T,X>, X extends Result> { 
 	
 	private static final String DOMAIN = "https://api.themoviedb.org/3";
 
-    public enum Type {
-		TV("tv");
-	
-		private final String text;
-	
-		Type(String text) {
-		    this.text = text;
-		}
-	
-		public String getText() {
-		    return this.text;
-		}
-    }
-
     private String apiKey;
-    private String type;
     private String query;
-    private Integer firstAirDateYear;
     private Integer page;
     private String language;
 
@@ -45,40 +30,30 @@ public class Search {
     	this.apiKey = apiKey;
     }
 
-    public Search type(Type searchType) {
-    	this.type = searchType.getText();
-    	return this;
-    }
-
-    public Search query(String query) {
+    public T query(String query) {
     	this.query = query;
-    	return this;
+    	return getThis();
     }
 
-    public Search firstAidDateYear(Integer firstAirDateYear) {
-    	this.firstAirDateYear = firstAirDateYear;
-    	return this;
-    }
-
-    public Search page(Integer page) {
+    public T page(Integer page) {
     	this.page = page;
-    	return this;
+    	return getThis();
     }
 
-    public Search language(String language) {
+    public T language(String language) {
     	this.language = language;
-    	return this;
+    	return getThis();
     }
     
-    public Response submit() {
+    public Response<X> submit() {
 		RestTemplate restTemplate = getRestTemplate();
 	
 		try {
 		    String responseBody = restTemplate.getForEntity(build(), String.class).getBody();
-		    Response results = readResults(responseBody);
+		    Response<X> results = readResults(responseBody);
 		    return results;
 		} catch (HttpClientErrorException e) {
-		    Response results = readResults(e.getResponseBodyAsString());
+		    Response<X> results = readResults(e.getResponseBodyAsString());
 		    return results;
 		}
     }
@@ -87,16 +62,8 @@ public class Search {
 		return apiKey;
 	}
 
-	public String getType() {
-		return type;
-	}
-
 	public String getQuery() {
 		return query;
-	}
-
-	public Integer getFirstAirDateYear() {
-		return firstAirDateYear;
 	}
 
 	public Integer getPage() {
@@ -111,15 +78,12 @@ public class Search {
         return new RestTemplate();
     }
     
-    private String build() {
+    protected String build() {
 		StringBuilder sb = new StringBuilder("");
 		sb.append(DOMAIN);
-		sb.append("/search/").append(this.type);
+		sb.append("/search/").append(getType());
 		sb.append("?api_key=").append(this.apiKey);
 		sb.append("&query=").append(this.query);
-		if (this.firstAirDateYear != null) {
-		    sb.append("&first_air_date_year=").append(this.firstAirDateYear);
-		}
 		if (this.page != null) {
 		    sb.append("&page=").append(this.page);
 		}
@@ -129,20 +93,25 @@ public class Search {
 		return sb.toString();
     }
     
-    private Response readResults(String responseBody) {
-		Response results;
+    private Response<X> readResults(String responseBody) {
+		Response<X> results;
 		try {
-			results = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-				.readValue(responseBody, Response.class);
+			ObjectMapper mapper = new ObjectMapper()
+					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+					.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+			 JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, getResponseType());
+			results = mapper.readValue(responseBody, type);
 		} catch (Exception e) {
-			results = new Response();
+			results = new Response<X>();
 			results.setStatusCode(500);
 			results.setStatusMessage("Failed to parse the response body");
 			results.setSuccess(false);
 		}
 		return results;
     }
+    
+    public abstract String getType();
+    public abstract T getThis();
+    public abstract Class<X> getResponseType();
 
 }

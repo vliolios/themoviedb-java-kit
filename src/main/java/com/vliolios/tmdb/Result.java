@@ -19,13 +19,9 @@ public class Result {
     private String backdropPath;
     private Double voteAverage;
     private String overview;
-    private String firstAirDate;
-    private List<String> originCountry;
     private List<String> genreIds;
     private String originalLanguage;
     private Integer voteCount;
-    private String name;
-    private String originalName;
 
     public String getPosterPath() {
     	return posterPath;
@@ -75,22 +71,6 @@ public class Result {
     	this.overview = overview;
     }
 
-    public String getFirstAirDate() {
-    	return firstAirDate;
-    }
-
-    public void setFirstAirDate(String firstAirDate) {
-    	this.firstAirDate = firstAirDate;
-    }
-
-    public List<String> getOriginCountry() {
-    	return originCountry;
-    }
-
-    public void setOriginCountry(List<String> originCountry) {
-    	this.originCountry = originCountry;
-    }
-
     public List<String> getGenreIds() {
     	return genreIds;
     }
@@ -115,25 +95,9 @@ public class Result {
     	this.voteCount = voteCount;
     }
 
-    public String getName() {
-    	return name;
-    }
-
-    public void setName(String name) {
-    	this.name = name;
-    }
-
-    public String getOriginalName() {
-    	return originalName;
-    }
-
-    public void setOriginalName(String originalName) {
-    	this.originalName = originalName;
-    }
-
     @Override
     public String toString() {
-    	return "\n\tResult{" + "\n\t\tposterPath=" + posterPath + ", \n\t\tpopularity=" + popularity + ", \n\t\tid=" + id + ", \n\t\tbackdropPath=" + backdropPath + ", \n\t\tvoteAverage=" + voteAverage + ", \n\t\toverview=" + overview + ", \n\t\tfirstAirDate=" + firstAirDate + ", \n\t\toriginCountry=" + originCountry + ", \n\t\tgenreIds=" + genreIds + ", \n\t\toriginalLanguage=" + originalLanguage + ", \n\t\tvoteCount=" + voteCount + ", \n\t\tname=" + name + ", \n\t\toriginalName=" + originalName + '}';
+    	return "\n\tResult{" + "\n\t\tposterPath=" + posterPath + ", \n\t\tpopularity=" + popularity + ", \n\t\tid=" + id + ", \n\t\tbackdropPath=" + backdropPath + ", \n\t\tvoteAverage=" + voteAverage + ", \n\t\toverview=" + overview + ", \n\t\tgenreIds=" + genreIds + ", \n\t\toriginalLanguage=" + originalLanguage + ", \n\t\tvoteCount=" + voteCount + '}';
     }
 
 }

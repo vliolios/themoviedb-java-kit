@@ -22,9 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.vliolios.tmdb.Search.Type;
-
-public class SearchTest {
+public class TVSearchTest {
 	
 	RestTemplate restTemplate = mock(RestTemplate.class); 
 	
@@ -64,32 +62,16 @@ public class SearchTest {
 			"}";
 
 	@Test
-	public void testType() {
-		Search search = new Search("abc");
-		search.type(Type.TV);
-		
-		assertThat("The search type is incorrect", search.getType(), equalTo("tv"));
-	}
-
-	@Test
 	public void testQuery() {
-		Search search = new Search("abc");
+		TVSearch search = new TVSearch("abc");
 		search.query("westworld");
 		
 		assertThat("The query is incorrect", search.getQuery(), equalTo("westworld"));
 	}
 
 	@Test
-	public void testFirstAidDateYear() {
-		Search search = new Search("abc");
-		search.firstAidDateYear(2000);
-		
-		assertThat("The first air date year is incorrect", search.getFirstAirDateYear(), equalTo(2000));
-	}
-
-	@Test
 	public void testPage() {
-		Search search = new Search("abc");
+		TVSearch search = new TVSearch("abc");
 		search.page(1);
 		
 		assertThat("The page is incorrect", search.getPage(), equalTo(1));
@@ -97,15 +79,23 @@ public class SearchTest {
 
 	@Test
 	public void testLanguage() {
-		Search search = new Search("abc");
+		TVSearch search = new TVSearch("abc");
 		search.language("en");
 		
 		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
 	}
 
 	@Test
+	public void testFirstAidDateYear() {
+		TVSearch search = new TVSearch("abc");
+		search.firstAidDateYear(2000);
+		
+		assertThat("The first air date year is incorrect", search.getFirstAirDateYear(), equalTo(2000));
+	}
+	
+	@Test
 	public void testSubmitResponseSuccessful() {
-		Search search = new Search("abc") {
+		TVSearch search = new TVSearch("abc") {
 			@Override
 			protected RestTemplate getRestTemplate() {
 				return restTemplate;
@@ -113,9 +103,9 @@ public class SearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_TV_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response response = search.type(Type.TV).query("matrix").firstAidDateYear(2000).page(0).language("en").submit();
+		Response<TVResult> response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
 		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&first_air_date_year=2000&page=0&language=en", String.class);
+		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), is(1));
@@ -124,7 +114,7 @@ public class SearchTest {
 		assertThat("The status code value in the response is incorrect", response.getStatusCode(), nullValue());
 		assertThat("The success value in the response is incorrect", response.getSuccess(), nullValue());
 		
-		Result result = response.getResults().get(0);
+		TVResult result = response.getResults().get(0);
 		assertThat("The poster path in the response's result is incorrect", result.getPosterPath(), is("/jIhL6mlT7AblhbHJgEoiBIOUVl1.jpg"));
 		assertThat("The popularity in the response's result is incorrect", result.getPopularity(), is(29.780826));
 		assertThat("The id in the response's result is incorrect", result.getId(), is(1399));
@@ -142,7 +132,7 @@ public class SearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		Search search = new Search("abc") {
+		TVSearch search = new TVSearch("abc") {
 			@Override
 			protected RestTemplate getRestTemplate() {
 				return restTemplate;
@@ -150,9 +140,9 @@ public class SearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_TV_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));		
-		Response response = search.type(Type.TV).query("matrix").firstAidDateYear(2000).page(0).language("en").submit();
+		Response response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
 		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&first_air_date_year=2000&page=0&language=en", String.class);
+		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -164,7 +154,7 @@ public class SearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		Search search = new Search("abc") {
+		TVSearch search = new TVSearch("abc") {
 			@Override
 			protected RestTemplate getRestTemplate() {
 				return restTemplate;
@@ -172,9 +162,9 @@ public class SearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response response = search.type(Type.TV).query("matrix").firstAidDateYear(2000).page(0).language("en").submit();
+		Response response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
 		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&first_air_date_year=2000&page=0&language=en", String.class);
+		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -182,6 +172,13 @@ public class SearchTest {
 		assertThat("The status message value in the response is incorrect", response.getStatusMessage(), is("Failed to parse the response body"));
 		assertThat("The status code value in the response is incorrect", response.getStatusCode(), is(500));
 		assertThat("The success value in the response is incorrect", response.getSuccess(), is(false));
+	}
+	
+	@Test
+	public void testGetType() {
+		TVSearch search = new TVSearch("abc");
+		
+		assertThat("The type is incorrect", search.getType(), equalTo("tv"));
 	}
 
 }
