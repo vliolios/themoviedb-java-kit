@@ -18,6 +18,14 @@ public class API {
     }
 
 	public <T extends Search<T, X>, X extends Result> T search(Class<T> clazz) {
-		return clazz.cast(clazz.equals(TVSearch.class) ? new TVSearch(apiKey) : new MovieSearch(apiKey));
+		T search;
+		if (clazz.equals(TVSearch.class)) {
+			search = clazz.cast(new TVSearch(apiKey));
+		} else if (clazz.equals(MovieSearch.class)) {
+			search = clazz.cast(new MovieSearch(apiKey));
+		} else {
+			search = clazz.cast(new CompanySearch(apiKey));
+		}
+		return search;
     }
 }

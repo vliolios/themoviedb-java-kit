@@ -140,7 +140,7 @@ public class TVSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_TV_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));		
-		Response response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
+		Response<TVResult> response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -162,7 +162,7 @@ public class TVSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
+		Response<TVResult> response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());

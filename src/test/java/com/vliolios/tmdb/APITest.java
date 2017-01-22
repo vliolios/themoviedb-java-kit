@@ -18,8 +18,10 @@ public class APITest {
 	public void testSearch() {
 		API api = new API("abc");
 		assertThat("The API key doesn't match", api.search(TVSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search(TVSearch.class), instanceOf(TVSearch.class));
+		assertThat("The search object ius not an instance of the right type", api.search(TVSearch.class), instanceOf(TVSearch.class));
 		assertThat("The API key doesn't match", api.search(MovieSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search(MovieSearch.class), instanceOf(MovieSearch.class));
+		assertThat("The search object ius not an instance of the right type", api.search(MovieSearch.class), instanceOf(MovieSearch.class));
+		assertThat("The API key doesn't match", api.search(MovieSearch.class).getApiKey(), equalTo("abc"));
+		assertThat("The search object ius not an instance of the right type", api.search(CompanySearch.class), instanceOf(CompanySearch.class));
 	}
 }

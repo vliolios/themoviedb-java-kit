@@ -2,13 +2,13 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class TVResult extends Result {
+public class TVResult extends WatchableResult {
 
     private String firstAirDate;
     private List<String> originCountry;
     private String name;
     private String originalName;
-	
+    
     public String getFirstAirDate() {
 		return firstAirDate;
 	}
@@ -32,8 +32,6 @@ public class TVResult extends Result {
 	}
 	public void setOriginalName(String originalName) {
 		this.originalName = originalName;
-	}
-    
-    
+	}  
 
 }

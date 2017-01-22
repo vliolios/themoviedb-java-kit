@@ -78,9 +78,4 @@ public class Response<T> {
     	this.success = success;
     }
 
-    @Override
-    public String toString() {
-    	return "Response{" + "\npage=" + page + ", \nresults=" + results + ", \ntotalResults=" + totalResults + ", \ntotalPages=" + totalPages + ", \nstatusMessage=" + statusMessage + ", \nstatusCode=" + statusCode + ", \nsuccess=" + success + '}';
-    }
-
 }
