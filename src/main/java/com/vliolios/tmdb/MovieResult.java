@@ -1,7 +1,10 @@
 package com.vliolios.tmdb;
 
-public class MovieResult extends Result {
+import java.util.List;
 
+public class MovieResult extends WatchableResult {
+
+	
 	public Boolean adult;
 	public String releaseDate;
 	public String originalTitle;

@@ -3,6 +3,7 @@ package com.vliolios.tmdb;
 
 public class MovieSearch extends Search<MovieSearch, MovieResult> {
 	
+	private String language;
 	private Boolean includeAdult;
 	private String region;
 	private Integer year;
@@ -11,6 +12,11 @@ public class MovieSearch extends Search<MovieSearch, MovieResult> {
 	MovieSearch(String apiKey) {
 		super(apiKey);
 	}
+	
+	public MovieSearch language(String language) {
+    	this.language = language;
+    	return this;
+    }
 	
 	public MovieSearch includeAdult(Boolean includeAdult) {
 		this.includeAdult = includeAdult;
@@ -32,6 +38,10 @@ public class MovieSearch extends Search<MovieSearch, MovieResult> {
 		return this;
 	}
 	
+	public String getLanguage() {
+		return language;
+	}
+	
 	public Boolean getIncludeAdult() {
 		return includeAdult;
 	}
@@ -51,6 +61,9 @@ public class MovieSearch extends Search<MovieSearch, MovieResult> {
 	@Override
 	public String build() {
 		StringBuilder sb = new StringBuilder(super.build());
+		if (this.language != null) {
+		    sb.append("&language=").append(this.language);
+		}
 		if (includeAdult != null) {
 			sb.append("&include_adult=").append(includeAdult.toString());
 		}

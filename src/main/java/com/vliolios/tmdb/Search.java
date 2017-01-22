@@ -24,7 +24,6 @@ public abstract class Search<T extends Search<T,X>, X extends Result> {
     private String apiKey;
     private String query;
     private Integer page;
-    private String language;
 
     Search(String apiKey) {
     	this.apiKey = apiKey;
@@ -37,11 +36,6 @@ public abstract class Search<T extends Search<T,X>, X extends Result> {
 
     public T page(Integer page) {
     	this.page = page;
-    	return getThis();
-    }
-
-    public T language(String language) {
-    	this.language = language;
     	return getThis();
     }
     
@@ -70,10 +64,6 @@ public abstract class Search<T extends Search<T,X>, X extends Result> {
 		return page;
 	}
 
-	public String getLanguage() {
-		return language;
-	}
-
 	protected RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
@@ -86,9 +76,6 @@ public abstract class Search<T extends Search<T,X>, X extends Result> {
 		sb.append("&query=").append(this.query);
 		if (this.page != null) {
 		    sb.append("&page=").append(this.page);
-		}
-		if (this.language != null) {
-		    sb.append("&language=").append(this.language);
 		}
 		return sb.toString();
     }
