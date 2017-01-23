@@ -23,6 +23,8 @@ public class API {
 			search = clazz.cast(new TVSearch(apiKey));
 		} else if (clazz.equals(MovieSearch.class)) {
 			search = clazz.cast(new MovieSearch(apiKey));
+		} else if (clazz.equals(CollectionSearch.class)) {
+			search = clazz.cast(new CollectionSearch(apiKey));
 		} else {
 			search = clazz.cast(new CompanySearch(apiKey));
 		}
