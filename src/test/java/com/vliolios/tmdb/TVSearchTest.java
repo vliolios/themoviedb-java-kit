@@ -162,9 +162,9 @@ public class TVSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<TVResult> response = search.query("matrix").page(0).language("en").firstAidDateYear(2000).submit();
+		Response<TVResult> response = search.query("matrix").submit();
 		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
+		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());

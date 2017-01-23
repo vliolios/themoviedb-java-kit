@@ -128,9 +128,9 @@ public class MovieSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<MovieResult> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).submit();
+		Response<MovieResult> response = search.query("matrix").submit();
 		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/movie?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US&year=2000&primary_release_year=1990", String.class);
+		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/movie?api_key=abc&query=matrix", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());

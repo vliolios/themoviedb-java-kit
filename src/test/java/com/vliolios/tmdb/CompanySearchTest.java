@@ -102,9 +102,9 @@ public class CompanySearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<CompanyResult> response = search.query("lucas").page(0).submit();
+		Response<CompanyResult> response = search.query("lucas").submit();
 		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/company?api_key=abc&query=lucas&page=0", String.class);
+		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/company?api_key=abc&query=lucas", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());

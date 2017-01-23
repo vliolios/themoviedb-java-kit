@@ -25,6 +25,8 @@ public class API {
 			search = clazz.cast(new MovieSearch(apiKey));
 		} else if (clazz.equals(CollectionSearch.class)) {
 			search = clazz.cast(new CollectionSearch(apiKey));
+		} else if (clazz.equals(KeywordSearch.class)) {
+			search = clazz.cast(new KeywordSearch(apiKey));
 		} else {
 			search = clazz.cast(new CompanySearch(apiKey));
 		}
