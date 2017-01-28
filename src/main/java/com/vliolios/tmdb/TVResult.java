@@ -2,7 +2,7 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class TVResult extends WatchableResult {
+public class TVResult extends WatchableResult implements KnownFor {
 
     private String firstAirDate;
     private List<String> originCountry;
@@ -32,6 +32,22 @@ public class TVResult extends WatchableResult {
 	}
 	public void setOriginalName(String originalName) {
 		this.originalName = originalName;
-	}  
+	}
+	
+	public boolean isMovie() {
+		return false;
+	}
+	    
+    public boolean isTV() {
+    	return true;
+    }
+    
+    public MovieResult asMovie() {
+		return null; 
+	}
+    
+    public TVResult asTV() {
+    	return this;
+    }
 
 }

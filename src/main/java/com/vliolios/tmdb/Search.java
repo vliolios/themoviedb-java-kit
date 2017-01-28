@@ -10,8 +10,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  *
@@ -86,8 +88,16 @@ public abstract class Search<T extends Search<T,X>, X extends Result> {
 			ObjectMapper mapper = new ObjectMapper()
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 					.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-			 JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, getResponseType());
-			results = mapper.readValue(responseBody, type);
+			
+			JsonNode root = mapper.readTree(responseBody);
+			if (root.get("results") != null) {
+				for (JsonNode resultNode : root.get("results")) {
+					((ObjectNode) resultNode).put("media_type", getType());	
+				}
+			}
+
+			JavaType type = mapper.getTypeFactory().constructParametricType(Response.class, getResponseType());
+			results = mapper.readValue(mapper.writeValueAsString(root), type);
 		} catch (Exception e) {
 			results = new Response<X>();
 			results.setStatusCode(500);

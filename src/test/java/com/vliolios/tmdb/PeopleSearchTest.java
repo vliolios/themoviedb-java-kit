@@ -52,6 +52,29 @@ public class PeopleSearchTest {
 			"          \"vote_count\": 5002,\n" + 
 			"          \"video\": false,\n" + 
 			"          \"vote_average\": 7.97\n" + 
+			"        }," +
+			" 		 {\n" + 
+			"          \"poster_path\": \"/xn3QM6aInhQp631K2lXpGFox2Kc.jpg\",\n" + 
+			"          \"popularity\": 6.605526,\n" + 
+			"          \"id\": 60866,\n" + 
+			"          \"overview\": \"A medical student who becomes a zombie joins a Coroner's Office in order to gain access to the brains she must reluctantly eat so that she can maintain her humanity. But every brain she eats, she also inherits their memories and must now solve their deaths with help from the Medical examiner and a police detective.\",\n" + 
+			"          \"backdrop_path\": \"/d2YDPTQPe3mI2LqBWwb0CchN54f.jpg\",\n" + 
+			"          \"vote_average\": 6.01,\n" + 
+			"          \"media_type\": \"tv\",\n" + 
+			"          \"first_air_date\": \"2015-03-17\",\n" + 
+			"          \"origin_country\": [\n" + 
+			"            \"US\"\n" + 
+			"          ],\n" + 
+			"          \"genre_ids\": [\n" + 
+			"            27,\n" + 
+			"            18,\n" + 
+			"            80,\n" + 
+			"            10765\n" + 
+			"          ],\n" + 
+			"          \"original_language\": \"en\",\n" + 
+			"          \"vote_count\": 69,\n" + 
+			"          \"name\": \"iZombie\",\n" + 
+			"          \"original_name\": \"iZombie\"\n" + 
 			"        }" +
 			"      ],\n" + 
 			"      \"name\": \"Bradley Hemmings\",\n" + 
@@ -95,6 +118,20 @@ public class PeopleSearchTest {
 		assertThat("The popularity in the response's result is incorrect", result.getPopularity(), is(1.273));
 		assertThat("The id in the response's result is incorrect", result.getId(), is(51329));
 		assertThat("The vore average in the response's result is incorrect", result.getAdult(), is(false));
+		
+		KnownFor movieKnownFor = result.getKnownFor().get(0);
+		assertThat("The first known-for item in the response's result is not a movie", movieKnownFor.isMovie(), is(true));
+		assertThat("The first known-for item in the response's result is a TV show", movieKnownFor.isTV(), is(false));
+		assertThat("The first known-for item in the response's result is a TV show", movieKnownFor.asTV(), nullValue());
+		assertThat("The poster path in the first known-for item in the response's result is incorrect", movieKnownFor.asMovie().getPosterPath(), is("/y31QB9kn3XSudA15tV7UWQ9XLuW.jpg"));
+		assertThat("The title in the first known-for item in the response's result is incorrect", movieKnownFor.asMovie().getTitle(), is("Guardians of the Galaxy"));
+		
+		KnownFor tvKnownFor = result.getKnownFor().get(1);
+		assertThat("The scond known-for item in the response's result is not a tv show", tvKnownFor.asTV().getPosterPath(), is("/xn3QM6aInhQp631K2lXpGFox2Kc.jpg"));
+		assertThat("The second known-for item in the response's result is a movie", tvKnownFor.isTV(), is(true));
+		assertThat("The second known-for item in the response's result is a movie", tvKnownFor.isMovie(), is(false));
+		assertThat("The poster path in the second known-for item in the response's result is incorrect", tvKnownFor.asMovie(), nullValue());
+		assertThat("The name in the second known-for item in the response's result is incorrect", tvKnownFor.asTV().getName(), is("iZombie"));
 	}
 	
 	@Test
