@@ -27,6 +27,8 @@ public class API {
 			search = clazz.cast(new CollectionSearch(apiKey));
 		} else if (clazz.equals(KeywordSearch.class)) {
 			search = clazz.cast(new KeywordSearch(apiKey));
+		} else if (clazz.equals(PeopleSearch.class)) {
+			search = clazz.cast(new PeopleSearch(apiKey));
 		} else {
 			search = clazz.cast(new CompanySearch(apiKey));
 		}
