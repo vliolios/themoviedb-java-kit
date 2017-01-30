@@ -17,7 +17,7 @@ public class API {
     	this.apiKey = apiKey;
     }
 
-	public <T extends Search<T, X>, X extends Result> T search(Class<T> clazz) {
+	public <T extends Search<T, X>, X> T search(Class<T> clazz) {
 		T search;
 		if (clazz.equals(TVSearch.class)) {
 			search = clazz.cast(new TVSearch(apiKey));
@@ -29,6 +29,8 @@ public class API {
 			search = clazz.cast(new KeywordSearch(apiKey));
 		} else if (clazz.equals(PeopleSearch.class)) {
 			search = clazz.cast(new PeopleSearch(apiKey));
+		} else if (clazz.equals(MultiSearch.class)) {
+			search = clazz.cast(new MultiSearch(apiKey));
 		} else {
 			search = clazz.cast(new CompanySearch(apiKey));
 		}

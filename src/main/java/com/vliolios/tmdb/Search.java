@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @author vliolios
  */
-public abstract class Search<T extends Search<T,X>, X extends Result> { 
+public abstract class Search<T extends Search<T,X>, X> { 
 	
 	private static final String DOMAIN = "https://api.themoviedb.org/3";
 
@@ -92,7 +92,9 @@ public abstract class Search<T extends Search<T,X>, X extends Result> {
 			JsonNode root = mapper.readTree(responseBody);
 			if (root.get("results") != null) {
 				for (JsonNode resultNode : root.get("results")) {
-					((ObjectNode) resultNode).put("media_type", getType());	
+					if (!((ObjectNode) resultNode).has("media_type")) {
+						((ObjectNode) resultNode).put("media_type", getType());
+					}
 				}
 			}
 

@@ -10,11 +10,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 	    property = "media_type")
 	@JsonSubTypes({
 	    @Type(value = MovieResult.class, name = "movie"),
-	    @Type(value = TVResult.class, name = "tv") })
-public interface KnownFor {
+	    @Type(value = TVResult.class, name = "tv"),
+	    @Type(value = PeopleResult.class, name = "person")})
+public interface Polymorphic {
     
     public boolean isMovie();
     public boolean isTV();
+    public boolean isPerson();
     public MovieResult asMovie();
     public TVResult asTV();
+    public PeopleResult asPerson();
 }

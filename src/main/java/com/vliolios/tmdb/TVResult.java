@@ -2,7 +2,7 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class TVResult extends WatchableResult implements KnownFor {
+public class TVResult extends WatchableResult implements Polymorphic {
 
     private String firstAirDate;
     private List<String> originCountry;
@@ -42,6 +42,10 @@ public class TVResult extends WatchableResult implements KnownFor {
     	return true;
     }
     
+	public boolean isPerson() {
+		return false;
+	}
+    
     public MovieResult asMovie() {
 		return null; 
 	}
@@ -49,5 +53,9 @@ public class TVResult extends WatchableResult implements KnownFor {
     public TVResult asTV() {
     	return this;
     }
+  
+	public PeopleResult asPerson() {
+		return null;
+	}
 
 }
