@@ -29,5 +29,7 @@ public class APITest {
 		assertThat("The search object ius not an instance of the right type", api.search(KeywordSearch.class), instanceOf(KeywordSearch.class));
 		assertThat("The API key doesn't match", api.search(PeopleSearch.class).getApiKey(), equalTo("abc"));
 		assertThat("The search object ius not an instance of the right type", api.search(PeopleSearch.class), instanceOf(PeopleSearch.class));
+		assertThat("The API key doesn't match", api.search(MultiSearch.class).getApiKey(), equalTo("abc"));
+		assertThat("The search object ius not an instance of the right type", api.search(MultiSearch.class), instanceOf(MultiSearch.class));
 	}
 }

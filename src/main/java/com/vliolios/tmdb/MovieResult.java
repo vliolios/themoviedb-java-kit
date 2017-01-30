@@ -2,7 +2,7 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class MovieResult extends WatchableResult implements KnownFor {
+public class MovieResult extends WatchableResult implements Polymorphic {
 
 	
 	public Boolean adult;
@@ -51,6 +51,10 @@ public class MovieResult extends WatchableResult implements KnownFor {
     	return false;
     }
     
+	public boolean isPerson() {
+		return false;
+	}
+    
     public MovieResult asMovie() {
 		return this; 
 	}
@@ -58,4 +62,8 @@ public class MovieResult extends WatchableResult implements KnownFor {
     public TVResult asTV() {
     	return null;
     }
+	
+	public PeopleResult asPerson() {
+		return null;
+	}
 }
