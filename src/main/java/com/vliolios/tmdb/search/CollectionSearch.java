@@ -17,8 +17,6 @@ public class CollectionSearch extends Search<CollectionSearch, CollectionResult>
 		return language;
 	}
 	
-	
-
 	@Override
 	protected String build() {
 		StringBuilder sb = new StringBuilder(super.build());

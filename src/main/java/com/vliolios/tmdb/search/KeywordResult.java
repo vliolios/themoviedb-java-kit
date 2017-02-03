@@ -12,6 +12,5 @@ public class KeywordResult extends Result {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+		
 }

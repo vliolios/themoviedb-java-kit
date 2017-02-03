@@ -10,12 +10,15 @@ public class CompanyResult extends Result {
 	public String getLogoPath() {
 		return logoPath;
 	}
+	
 	public void setLogoPath(String logoPath) {
 		this.logoPath = logoPath;
 	}
+	
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}	

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.vliolios.tmdb;
 
 import com.vliolios.tmdb.search.CollectionSearch;
@@ -46,12 +41,15 @@ public class API {
 		public KeywordSearch keyword() {
 			return new KeywordSearch(apiKey);
 		}
+		
 		public PeopleSearch people() {
 			return new PeopleSearch(apiKey);
 		}
+		
 		public MultiSearch multi() {
 			return new MultiSearch(apiKey);
 		}
+		
 		public CompanySearch company() {
 			return new CompanySearch(apiKey);
 		}
