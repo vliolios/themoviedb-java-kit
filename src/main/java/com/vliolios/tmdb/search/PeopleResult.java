@@ -1,6 +1,8 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 import java.util.List;
+
+import com.vliolios.tmdb.Result;
 
 public class PeopleResult extends Result implements MultiResult {
 	

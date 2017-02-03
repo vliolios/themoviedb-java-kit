@@ -1,4 +1,4 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 public class KeywordSearch extends Search<KeywordSearch, KeywordResult> {
 

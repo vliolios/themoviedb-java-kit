@@ -1,4 +1,4 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 
 public class MovieSearch extends Search<MovieSearch, MovieResult> {
@@ -9,7 +9,7 @@ public class MovieSearch extends Search<MovieSearch, MovieResult> {
 	private Integer year;
 	private Integer  primaryReleaseYear;
 
-	MovieSearch(String apiKey) {
+	public MovieSearch(String apiKey) {
 		super(apiKey);
 	}
 	

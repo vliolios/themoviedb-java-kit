@@ -1,10 +1,10 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 public class CollectionSearch extends Search<CollectionSearch, CollectionResult> {
 
 	private String language;
 	
-	CollectionSearch(String apiKey) {
+	public CollectionSearch(String apiKey) {
 		super(apiKey);
 	}
 	

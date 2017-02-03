@@ -1,8 +1,8 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 public class CompanySearch extends Search<CompanySearch, CompanyResult> {
 
-	CompanySearch(String apiKey) {
+	public CompanySearch(String apiKey) {
 		super(apiKey);
 	}
 

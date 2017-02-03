@@ -1,4 +1,4 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 public class PeopleSearch extends Search<PeopleSearch, PeopleResult> {
 	

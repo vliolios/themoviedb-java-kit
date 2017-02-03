@@ -1,4 +1,6 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
+
+import com.vliolios.tmdb.Result;
 
 public class KeywordResult extends Result {
 	private String name;

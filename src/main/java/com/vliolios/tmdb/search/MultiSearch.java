@@ -1,4 +1,4 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 public class MultiSearch extends Search<MultiSearch, MultiResult> {
 	

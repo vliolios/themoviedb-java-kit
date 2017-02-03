@@ -5,6 +5,14 @@
  */
 package com.vliolios.tmdb;
 
+import com.vliolios.tmdb.search.CollectionSearch;
+import com.vliolios.tmdb.search.CompanySearch;
+import com.vliolios.tmdb.search.KeywordSearch;
+import com.vliolios.tmdb.search.MovieSearch;
+import com.vliolios.tmdb.search.MultiSearch;
+import com.vliolios.tmdb.search.PeopleSearch;
+import com.vliolios.tmdb.search.TVSearch;
+
 /**
  *
  * @author vliolios

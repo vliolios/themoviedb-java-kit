@@ -1,4 +1,4 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,6 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.vliolios.tmdb.search.MovieSearch;
+import com.vliolios.tmdb.search.MultiResult;
+import com.vliolios.tmdb.search.MultiSearch;
+import com.vliolios.tmdb.search.Response;
 
 public class MultiSearchTest {
 
