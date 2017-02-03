@@ -17,23 +17,36 @@ public class API {
     	this.apiKey = apiKey;
     }
 
-	public <T extends Search<T, X>, X> T search(Class<T> clazz) {
-		T search;
-		if (clazz.equals(TVSearch.class)) {
-			search = clazz.cast(new TVSearch(apiKey));
-		} else if (clazz.equals(MovieSearch.class)) {
-			search = clazz.cast(new MovieSearch(apiKey));
-		} else if (clazz.equals(CollectionSearch.class)) {
-			search = clazz.cast(new CollectionSearch(apiKey));
-		} else if (clazz.equals(KeywordSearch.class)) {
-			search = clazz.cast(new KeywordSearch(apiKey));
-		} else if (clazz.equals(PeopleSearch.class)) {
-			search = clazz.cast(new PeopleSearch(apiKey));
-		} else if (clazz.equals(MultiSearch.class)) {
-			search = clazz.cast(new MultiSearch(apiKey));
-		} else {
-			search = clazz.cast(new CompanySearch(apiKey));
-		}
-		return search;
+	public SearchSelector search() {
+		return new SearchSelector();
     }
+	
+	public class SearchSelector {
+		
+		public TVSearch tv() {
+			return new TVSearch(apiKey);
+		}
+		
+		public MovieSearch movie() {
+			return new MovieSearch(apiKey);
+		}
+		
+		public CollectionSearch collection() {
+			return new CollectionSearch(apiKey);
+		}
+		
+		public KeywordSearch keyword() {
+			return new KeywordSearch(apiKey);
+		}
+		public PeopleSearch people() {
+			return new PeopleSearch(apiKey);
+		}
+		public MultiSearch multi() {
+			return new MultiSearch(apiKey);
+		}
+		public CompanySearch company() {
+			return new CompanySearch(apiKey);
+		}
+		
+	}
 }
