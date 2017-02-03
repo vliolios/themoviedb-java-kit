@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 	    @Type(value = MovieResult.class, name = "movie"),
 	    @Type(value = TVResult.class, name = "tv"),
 	    @Type(value = PeopleResult.class, name = "person")})
-public interface Polymorphic {
+public interface MultiResult {
     
     public boolean isMovie();
     public boolean isTV();

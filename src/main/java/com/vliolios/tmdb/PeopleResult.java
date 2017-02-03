@@ -2,13 +2,13 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class PeopleResult extends Result implements Polymorphic {
+public class PeopleResult extends Result implements MultiResult {
 	
 	private String profilePath;
 	private Boolean adult;
 	private String name;
 	private Double popularity;
-	private List<Polymorphic> knownFor;
+	private List<MultiResult> knownFor;
 	
 	public String getProfilePath() {
 		return profilePath;
@@ -34,10 +34,10 @@ public class PeopleResult extends Result implements Polymorphic {
 	public void setPopularity(Double popularity) {
 		this.popularity = popularity;
 	}
-	public List<Polymorphic> getKnownFor() {
+	public List<MultiResult> getKnownFor() {
 		return knownFor;
 	}
-	public void setKnownFor(List<Polymorphic> knownFor) {
+	public void setKnownFor(List<MultiResult> knownFor) {
 		this.knownFor = knownFor;
 	}
 	public boolean isMovie() {

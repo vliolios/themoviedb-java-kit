@@ -2,7 +2,7 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class TVResult extends WatchableResult implements Polymorphic {
+public class TVResult extends WatchableResult implements MultiResult {
 
     private String firstAirDate;
     private List<String> originCountry;

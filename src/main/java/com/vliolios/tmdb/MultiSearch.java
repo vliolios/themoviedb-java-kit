@@ -1,6 +1,6 @@
 package com.vliolios.tmdb;
 
-public class MultiSearch extends Search<MultiSearch, Polymorphic> {
+public class MultiSearch extends Search<MultiSearch, MultiResult> {
 	
 	private String language;
 	private Boolean includeAdult;
@@ -65,8 +65,8 @@ public class MultiSearch extends Search<MultiSearch, Polymorphic> {
 	}
 
 	@Override
-	public Class<Polymorphic> getResponseType() {
-		return Polymorphic.class;
+	public Class<MultiResult> getResponseType() {
+		return MultiResult.class;
 	}
 
 }

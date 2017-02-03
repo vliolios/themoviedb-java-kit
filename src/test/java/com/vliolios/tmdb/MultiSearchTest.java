@@ -153,7 +153,7 @@ public class MultiSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_MULTI_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<Polymorphic> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
+		Response<MultiResult> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/multi?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -164,7 +164,7 @@ public class MultiSearchTest {
 		assertThat("The status code value in the response is incorrect", response.getStatusCode(), nullValue());
 		assertThat("The success value in the response is incorrect", response.getSuccess(), nullValue());
 		
-		Polymorphic movieResult = response.getResults().get(0);
+		MultiResult movieResult = response.getResults().get(0);
 		assertThat("The first result in the response is a person", movieResult.isPerson(), is(false));
 		assertThat("The first result in the response is a tv show", movieResult.isTV(), is(false));
 		assertThat("The first result in the response is not a movie", movieResult.isMovie(), is(true));
@@ -172,7 +172,7 @@ public class MultiSearchTest {
 		assertThat("The first result in the response is a tv show", movieResult.asTV(), nullValue());
 		assertThat("The title in the response's result is incorrect", movieResult.asMovie().getTitle(), is("Alice Cooper & Friends"));
 		
-		Polymorphic tvResult = response.getResults().get(1);
+		MultiResult tvResult = response.getResults().get(1);
 		assertThat("The second result in the response is a person", tvResult.isPerson(), is(false));
 		assertThat("The second result in the response is a movie", tvResult.isMovie(), is(false));
 		assertThat("The second result in the response is a not tv show", tvResult.isTV(), is(true));
@@ -180,7 +180,7 @@ public class MultiSearchTest {
 		assertThat("The second result in the response is a movie", tvResult.asMovie(), nullValue());
 		assertThat("The name in the response's result is incorrect", tvResult.asTV().getName(), is("Cooper Barrett's Guide to Surviving Life"));
 		
-		Polymorphic personResult = response.getResults().get(2);
+		MultiResult personResult = response.getResults().get(2);
 		assertThat("The third result in the response is a tv show", personResult.isTV(), is(false));
 		assertThat("The third result in the response is a movie", personResult.isMovie(), is(false));
 		assertThat("The third result in the response is a not person", personResult.isPerson(), is(true));
@@ -200,7 +200,7 @@ public class MultiSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_MULTI_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));			
-		Response<Polymorphic> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
+		Response<MultiResult> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/multi?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -222,7 +222,7 @@ public class MultiSearchTest {
 		};
 		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<Polymorphic> response = search.query("matrix").submit();
+		Response<MultiResult> response = search.query("matrix").submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/multi?api_key=abc&query=matrix", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());

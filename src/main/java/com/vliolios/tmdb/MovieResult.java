@@ -2,7 +2,7 @@ package com.vliolios.tmdb;
 
 import java.util.List;
 
-public class MovieResult extends WatchableResult implements Polymorphic {
+public class MovieResult extends WatchableResult implements MultiResult {
 
 	
 	public Boolean adult;
