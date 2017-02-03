@@ -17,19 +17,12 @@ public class APITest {
 	@Test
 	public void testSearch() {
 		API api = new API("abc");
-		assertThat("The API key doesn't match", api.search(TVSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(TVSearch.class), instanceOf(TVSearch.class));
-		assertThat("The API key doesn't match", api.search(MovieSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(MovieSearch.class), instanceOf(MovieSearch.class));
-		assertThat("The API key doesn't match", api.search(CompanySearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(CompanySearch.class), instanceOf(CompanySearch.class));
-		assertThat("The API key doesn't match", api.search(CollectionSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(CollectionSearch.class), instanceOf(CollectionSearch.class));
-		assertThat("The API key doesn't match", api.search(KeywordSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(KeywordSearch.class), instanceOf(KeywordSearch.class));
-		assertThat("The API key doesn't match", api.search(PeopleSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(PeopleSearch.class), instanceOf(PeopleSearch.class));
-		assertThat("The API key doesn't match", api.search(MultiSearch.class).getApiKey(), equalTo("abc"));
-		assertThat("The search object ius not an instance of the right type", api.search(MultiSearch.class), instanceOf(MultiSearch.class));
+		assertThat("The API key doesn't match", api.search().tv().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", api.search().movie().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", api.search().company().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", api.search().collection().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", api.search().keyword().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", api.search().people().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", api.search().multi().getApiKey(), equalTo("abc"));
 	}
 }

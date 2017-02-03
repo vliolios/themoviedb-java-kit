@@ -1,4 +1,4 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -19,6 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.vliolios.tmdb.search.MultiResult;
+import com.vliolios.tmdb.search.PeopleResult;
+import com.vliolios.tmdb.search.PeopleSearch;
+import com.vliolios.tmdb.search.Response;
 
 public class PeopleSearchTest {
 	
@@ -119,12 +124,12 @@ public class PeopleSearchTest {
 		assertThat("The id in the response's result is incorrect", result.getId(), is(51329));
 		assertThat("The vore average in the response's result is incorrect", result.getAdult(), is(false));
 		
-		Polymorphic movieKnownFor = result.getKnownFor().get(0);
+		MultiResult movieKnownFor = result.getKnownFor().get(0);
 		assertThat("The first known-for item in the response's result is not a movie", movieKnownFor.isMovie(), is(true));
 		assertThat("The poster path in the first known-for item in the response's result is incorrect", movieKnownFor.asMovie().getPosterPath(), is("/y31QB9kn3XSudA15tV7UWQ9XLuW.jpg"));
 		assertThat("The title in the first known-for item in the response's result is incorrect", movieKnownFor.asMovie().getTitle(), is("Guardians of the Galaxy"));
 		
-		Polymorphic tvKnownFor = result.getKnownFor().get(1);
+		MultiResult tvKnownFor = result.getKnownFor().get(1);
 		assertThat("The second known-for item in the response's result is a movie", tvKnownFor.isTV(), is(true));
 		assertThat("The scond known-for item in the response's result is not a tv show", tvKnownFor.asTV().getPosterPath(), is("/xn3QM6aInhQp631K2lXpGFox2Kc.jpg"));
 		assertThat("The name in the second known-for item in the response's result is incorrect", tvKnownFor.asTV().getName(), is("iZombie"));

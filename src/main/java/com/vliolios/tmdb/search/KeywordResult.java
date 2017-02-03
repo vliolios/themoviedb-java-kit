@@ -1,4 +1,6 @@
-package com.vliolios.tmdb;
+package com.vliolios.tmdb.search;
+
+import com.vliolios.tmdb.Result;
 
 public class KeywordResult extends Result {
 	private String name;
@@ -10,6 +12,5 @@ public class KeywordResult extends Result {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+		
 }
