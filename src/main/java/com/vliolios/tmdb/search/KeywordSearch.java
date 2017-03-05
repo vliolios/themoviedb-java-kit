@@ -1,9 +1,15 @@
 package com.vliolios.tmdb.search;
 
-public class KeywordSearch extends Search<KeywordSearch, KeywordResult> {
+import org.springframework.web.client.RestTemplate;
 
-	public KeywordSearch(String apiKey) {
-		super(apiKey);
+public class KeywordSearch extends Search<KeywordResult> {
+
+	private KeywordSearch(String apiKey, RestTemplate restTemplate) {
+		super(apiKey, restTemplate);
+	}
+
+	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+		return new Builder(apiKey, restTemplate);
 	}
 
 	@Override
@@ -12,13 +18,35 @@ public class KeywordSearch extends Search<KeywordSearch, KeywordResult> {
 	}
 
 	@Override
-	public KeywordSearch getThis() {
-		return this;
-	}
-
-	@Override
 	public Class<KeywordResult> getResponseType() {
 		return KeywordResult.class;
+	}
+
+	public static class Builder implements KeywordSearch.SearchWithQuery {
+		KeywordSearch keywordSearch;
+
+		private Builder(String apiKey, RestTemplate restTemplate) {
+			this.keywordSearch = new KeywordSearch(apiKey, restTemplate);
+		}
+
+		public Builder query(String query) {
+			keywordSearch.query(query);
+			return this;
+		}
+
+		public Builder page(Integer page) {
+			keywordSearch.page(page);
+			return this;
+		}
+
+		public KeywordSearch build() {
+			return keywordSearch;
+		}
+
+	}
+
+	public interface SearchWithQuery {
+		KeywordSearch.Builder query(String query);
 	}
 
 }

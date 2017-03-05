@@ -7,11 +7,8 @@ import com.vliolios.tmdb.search.MovieSearch;
 import com.vliolios.tmdb.search.MultiSearch;
 import com.vliolios.tmdb.search.PeopleSearch;
 import com.vliolios.tmdb.search.TVSearch;
+import org.springframework.web.client.RestTemplate;
 
-/**
- *
- * @author vliolios
- */
 public class API {
 
     private final String apiKey;
@@ -26,32 +23,32 @@ public class API {
 	
 	public class SearchSelector {
 		
-		public TVSearch tv() {
-			return new TVSearch(apiKey);
+		public TVSearch.SearchWithQuery tv() {
+			return TVSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public MovieSearch movie() {
-			return new MovieSearch(apiKey);
+		public MovieSearch.SearchWithQuery movie() {
+			return MovieSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public CollectionSearch collection() {
-			return new CollectionSearch(apiKey);
+		public CollectionSearch.SearchWithQuery collection() {
+			return CollectionSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public KeywordSearch keyword() {
-			return new KeywordSearch(apiKey);
+		public KeywordSearch.SearchWithQuery keyword() {
+			return KeywordSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public PeopleSearch people() {
-			return new PeopleSearch(apiKey);
+		public PeopleSearch.SearchWithQuery people() {
+			return PeopleSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public MultiSearch multi() {
-			return new MultiSearch(apiKey);
+		public MultiSearch.SearchWithQuery multi() {
+			return MultiSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public CompanySearch company() {
-			return new CompanySearch(apiKey);
+		public CompanySearch.SearchWithQuery company() {
+			return CompanySearch.apiKey(apiKey, new RestTemplate());
 		}
 		
 	}

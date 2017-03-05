@@ -98,15 +98,8 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		PeopleSearch search = new PeopleSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<PeopleResult> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
+		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS, HttpStatus.OK));
+		Response<PeopleResult> response = PeopleSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/person?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -137,15 +130,8 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		PeopleSearch search = new PeopleSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_PEOPLE_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));			
-		Response<PeopleResult> response = search.query("brad").page(0).language("en").includeAdult(true).region("US").submit();
+		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_PEOPLE_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));
+		Response<PeopleResult> response = PeopleSearch.apiKey("abc", restTemplate).query("brad").page(0).language("en").includeAdult(true).region("US").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/person?api_key=abc&query=brad&page=0&language=en&include_adult=true&region=US", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -159,15 +145,8 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		PeopleSearch search = new PeopleSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<PeopleResult> response = search.query("matrix").submit();
+		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));
+		Response<PeopleResult> response = PeopleSearch.apiKey("abc", restTemplate).query("matrix").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/person?api_key=abc&query=matrix", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -181,41 +160,31 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testQuery() {
-		PeopleSearch search = new PeopleSearch("abc");
-		search.query("Brad");
-		
+		PeopleSearch search = PeopleSearch.apiKey("abc", restTemplate).query("Brad").build();
 		assertThat("The query is incorrect", search.getQuery(), equalTo("Brad"));
 	}
 	
 	@Test
 	public void testPage() {
-		PeopleSearch search = new PeopleSearch("abc");
-		search.page(1);
-		
+		PeopleSearch search =PeopleSearch.apiKey("abc", restTemplate).query("Brad").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), equalTo(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		PeopleSearch search = new PeopleSearch("abc");
-		search.language("en");
-		
+		PeopleSearch search =PeopleSearch.apiKey("abc", restTemplate).query("Brad").language("en").build();
 		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
 	}
 
 	@Test
 	public void testIncludeAdult() {
-		PeopleSearch search = new PeopleSearch("abc");
-		search.includeAdult(true);
-		
+		PeopleSearch search =PeopleSearch.apiKey("abc", restTemplate).query("Brad").includeAdult(true).build();
 		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), equalTo(true));
 	}
 
 	@Test
 	public void testRegion() {
-		PeopleSearch search = new PeopleSearch("abc");
-		search.region("US");
-		
+		PeopleSearch search = PeopleSearch.apiKey("abc", restTemplate).query("Brad").region("US").build();
 		assertThat("The region is incorrect", search.getRegion(), equalTo("US"));
 	}
 

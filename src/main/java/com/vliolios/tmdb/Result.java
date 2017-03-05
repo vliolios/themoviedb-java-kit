@@ -1,9 +1,5 @@
 package com.vliolios.tmdb;
 
-/**
- *
- * @author vliolios
- */
 public class Result {
 
     private Integer id;

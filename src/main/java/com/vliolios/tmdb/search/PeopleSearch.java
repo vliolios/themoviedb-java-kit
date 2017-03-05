@@ -1,28 +1,19 @@
 package com.vliolios.tmdb.search;
 
-public class PeopleSearch extends Search<PeopleSearch, PeopleResult> {
+import org.springframework.web.client.RestTemplate;
+
+public class PeopleSearch extends Search<PeopleResult> {
 	
 	private String language;
 	private Boolean includeAdult;
 	private String region;
 
-	public PeopleSearch(String apiKey) {
-		super(apiKey);
-	}
-	
-	public PeopleSearch language(String language) {
-    	this.language = language;
-    	return this;
-    }
-	
-	public PeopleSearch includeAdult(Boolean includeAdult) {
-		this.includeAdult = includeAdult;
-		return this;
+	private PeopleSearch(String apiKey, RestTemplate restTemplate) {
+		super(apiKey, restTemplate);
 	}
 
-	public PeopleSearch region(String region) {
-		this.region = region;
-		return this;
+	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+		return new Builder(apiKey, restTemplate);
 	}
 	
 	public String getLanguage() {
@@ -59,13 +50,49 @@ public class PeopleSearch extends Search<PeopleSearch, PeopleResult> {
 	}
 
 	@Override
-	public PeopleSearch getThis() {
-		return this;
-	}
-
-	@Override
 	public Class<PeopleResult> getResponseType() {
 		return PeopleResult.class;
+	}
+
+	public static class Builder implements SearchWithQuery {
+		PeopleSearch multiSearch;
+
+		private Builder(String apiKey, RestTemplate restTemplate) {
+			this.multiSearch = new PeopleSearch(apiKey, restTemplate);
+		}
+
+		public Builder query(String query) {
+			multiSearch.query(query);
+			return this;
+		}
+
+		public Builder page(Integer page) {
+			multiSearch.page(page);
+			return this;
+		}
+
+		public Builder language(String language) {
+			multiSearch.language = language;
+			return this;
+		}
+
+		public Builder includeAdult(Boolean includeAdult) {
+			multiSearch.includeAdult = includeAdult;
+			return this;
+		}
+
+		public Builder region(String region) {
+			multiSearch.region = region;
+			return this;
+		}
+
+		public PeopleSearch build() {
+			return multiSearch;
+		}
+	}
+
+	public interface SearchWithQuery {
+		Builder query(String query);
 	}
 
 }

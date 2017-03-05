@@ -50,15 +50,8 @@ public class CollectionSearchTest {
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		CollectionSearch search = new CollectionSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_COLLECTION_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<CollectionResult> response = search.query("star").page(0).language("en").submit();
+		Response<CollectionResult> response = CollectionSearch.apiKey("abc", restTemplate).query("star").page(0).language("en").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/collection?api_key=abc&query=star&page=0&language=en", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -78,15 +71,8 @@ public class CollectionSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		CollectionSearch search = new CollectionSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_COLLECTION_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));			
-		Response<CollectionResult> response = search.query("star").page(0).language("en").submit();
+		Response<CollectionResult> response = CollectionSearch.apiKey("abc", restTemplate).query("star").page(0).language("en").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/collection?api_key=abc&query=star&page=0&language=en", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -100,15 +86,8 @@ public class CollectionSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		CollectionSearch search = new CollectionSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<CollectionResult> response = search.query("star").submit();
+		Response<CollectionResult> response = CollectionSearch.apiKey("abc", restTemplate).query("star").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/collection?api_key=abc&query=star", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -122,32 +101,26 @@ public class CollectionSearchTest {
 
 	@Test
 	public void testQuery() {
-		CollectionSearch search = new CollectionSearch("abc");
-		search.query("star wars");
-		
+		CollectionSearch search = CollectionSearch.apiKey("abc", restTemplate).query("star wars").build();
+
 		assertThat("The query is incorrect", search.getQuery(), equalTo("star wars"));
 	}
 
 	@Test
 	public void testPage() {
-		CollectionSearch search = new CollectionSearch("abc");
-		search.page(1);
-		
+		CollectionSearch search = CollectionSearch.apiKey("abc", restTemplate).query("star wars").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), equalTo(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		CollectionSearch search = new CollectionSearch("abc");
-		search.language("en");
-		
+		CollectionSearch search = CollectionSearch.apiKey("abc", restTemplate).query("star wars").language("en").build();
 		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
 	}
 
 	@Test
 	public void testGetType() {
-		CollectionSearch search = new CollectionSearch("abc");
-		
+		CollectionSearch search = CollectionSearch.apiKey("abc", restTemplate).query("star wars").build();
 		assertThat("The type is incorrect", search.getType(), equalTo("collection"));
 	}
 

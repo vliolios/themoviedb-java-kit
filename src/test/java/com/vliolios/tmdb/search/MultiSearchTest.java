@@ -150,15 +150,8 @@ public class MultiSearchTest {
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		MultiSearch search = new MultiSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_MULTI_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<MultiResult> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
+		Response<MultiResult> response = MultiSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/multi?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -197,15 +190,8 @@ public class MultiSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		MultiSearch search = new MultiSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_MULTI_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));			
-		Response<MultiResult> response = search.query("matrix").page(0).language("en").includeAdult(true).region("US").submit();
+		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_MULTI_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));
+		Response<MultiResult> response = MultiSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/multi?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -219,15 +205,8 @@ public class MultiSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		MultiSearch search = new MultiSearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<MultiResult> response = search.query("matrix").submit();
+		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));
+		Response<MultiResult> response = MultiSearch.apiKey("abc", restTemplate).query("matrix").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/multi?api_key=abc&query=matrix", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -241,48 +220,37 @@ public class MultiSearchTest {
 	
 	@Test
 	public void testQuery() {
-		MovieSearch search = new MovieSearch("abc");
-		search.query("matrix");
-		
+		MultiSearch search = MultiSearch.apiKey("abc", restTemplate).query("matrix").build();
 		assertThat("The query is incorrect", search.getQuery(), equalTo("matrix"));
 	}
 	
 	@Test
 	public void testPage() {
-		MultiSearch search = new MultiSearch("abc");
-		search.page(1);
-		
+		MultiSearch search = MultiSearch.apiKey("abc", restTemplate).query("matrix").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), equalTo(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		MultiSearch search = new MultiSearch("abc");
-		search.language("en");
-		
+		MultiSearch search = MultiSearch.apiKey("abc", restTemplate).query("matrix").language("en").build();
 		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
 	}
 
 	@Test
 	public void testIncludeAdult() {
-		MultiSearch search = new MultiSearch("abc");
-		search.includeAdult(true);
-		
+		MultiSearch search = MultiSearch.apiKey("abc", restTemplate).query("matrix").includeAdult(true).build();
 		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), equalTo(true));
 	}
 
 	@Test
 	public void testRegion() {
-		MultiSearch search = new MultiSearch("abc");
-		search.region("US");
-		
+		MultiSearch search = MultiSearch.apiKey("abc", restTemplate).query("matrix").region("US").build();
 		assertThat("The region is incorrect", search.getRegion(), equalTo("US"));
 	}
 
 	@Test
 	public void testGetType() {
-		MultiSearch search = new MultiSearch("abc");
-		
+		MultiSearch search = MultiSearch.apiKey("abc", restTemplate).query("matrix").build();
 		assertThat("The type is incorrect", search.getType(), equalTo("multi"));
 	}
 

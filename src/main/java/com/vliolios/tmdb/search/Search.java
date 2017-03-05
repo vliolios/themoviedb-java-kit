@@ -1,5 +1,6 @@
 package com.vliolios.tmdb.search;
 
+import com.vliolios.tmdb.Result;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -10,11 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-/**
- *
- * @author vliolios
- */
-public abstract class Search<T extends Search<T,X>, X> { 
+public abstract class Search<X> {
 	
 	private static final String DOMAIN = "https://api.themoviedb.org/3";
 
@@ -22,18 +19,19 @@ public abstract class Search<T extends Search<T,X>, X> {
     private String query;
     private Integer page;
 
-    Search(String apiKey) {
+    private RestTemplate restTemplate;
+
+    Search(String apiKey, RestTemplate restTemplate) {
     	this.apiKey = apiKey;
+    	this.restTemplate = restTemplate;
     }
 
-    public T query(String query) {
+	protected void query(String query) {
     	this.query = query;
-    	return getThis();
     }
 
-    public T page(Integer page) {
+	protected void page(Integer page) {
     	this.page = page;
-    	return getThis();
     }
     
     public Response<X> submit() {
@@ -62,7 +60,7 @@ public abstract class Search<T extends Search<T,X>, X> {
 	}
 
 	protected RestTemplate getRestTemplate() {
-        return new RestTemplate();
+        return restTemplate;
     }
     
     protected String build() {
@@ -105,7 +103,6 @@ public abstract class Search<T extends Search<T,X>, X> {
     }
     
     public abstract String getType();
-    public abstract T getThis();
     public abstract Class<X> getResponseType();
 
 }
