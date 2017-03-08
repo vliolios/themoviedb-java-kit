@@ -1,29 +1,19 @@
 package com.vliolios.tmdb.search;
 
-public class MultiSearch extends Search<MultiSearch, MultiResult> {
+import org.springframework.web.client.RestTemplate;
+
+public class MultiSearch extends Search<MultiResult> {
 	
 	private String language;
 	private Boolean includeAdult;
 	private String region;
 
-	public MultiSearch(String apiKey) {
-		super(apiKey);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public MultiSearch language(String language) {
-    	this.language = language;
-    	return this;
-    }
-	
-	public MultiSearch includeAdult(Boolean includeAdult) {
-		this.includeAdult = includeAdult;
-		return this;
+	private MultiSearch(String apiKey, RestTemplate restTemplate) {
+		super(apiKey, restTemplate);
 	}
 
-	public MultiSearch region(String region) {
-		this.region = region;
-		return this;
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
+		return new Builder(apiKey, restTemplate);
 	}
 	
 	public String getLanguage() {
@@ -60,13 +50,44 @@ public class MultiSearch extends Search<MultiSearch, MultiResult> {
 	}
 
 	@Override
-	public MultiSearch getThis() {
-		return this;
-	}
-
-	@Override
 	public Class<MultiResult> getResponseType() {
 		return MultiResult.class;
 	}
 
+	public static class Builder implements SearchWithQuery<Builder> {
+		MultiSearch multiSearch;
+
+		private Builder(String apiKey, RestTemplate restTemplate) {
+			this.multiSearch = new MultiSearch(apiKey, restTemplate);
+		}
+
+		public Builder query(String query) {
+			multiSearch.query(query);
+			return this;
+		}
+
+		public Builder page(Integer page) {
+			multiSearch.page(page);
+			return this;
+		}
+
+		public Builder language(String language) {
+			multiSearch.language = language;
+			return this;
+		}
+
+		public Builder includeAdult(Boolean includeAdult) {
+			multiSearch.includeAdult = includeAdult;
+			return this;
+		}
+
+		public Builder region(String region) {
+			multiSearch.region = region;
+			return this;
+		}
+
+		public MultiSearch build() {
+			return multiSearch;
+		}
+	}
 }

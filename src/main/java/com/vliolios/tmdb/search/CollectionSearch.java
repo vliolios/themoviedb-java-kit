@@ -1,18 +1,19 @@
 package com.vliolios.tmdb.search;
 
-public class CollectionSearch extends Search<CollectionSearch, CollectionResult> {
+import org.springframework.web.client.RestTemplate;
+
+public class CollectionSearch extends Search<CollectionResult> {
 
 	private String language;
 	
-	public CollectionSearch(String apiKey) {
-		super(apiKey);
+	private CollectionSearch(String apiKey, RestTemplate restTemplate) {
+		super(apiKey, restTemplate);
 	}
-	
-	public CollectionSearch language(String language) {
-    	this.language = language;
-    	return this;
-    }
-	
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
+		return new Builder(apiKey, restTemplate);
+	}
+
 	public String getLanguage() {
 		return language;
 	}
@@ -32,13 +33,35 @@ public class CollectionSearch extends Search<CollectionSearch, CollectionResult>
 	}
 
 	@Override
-	public CollectionSearch getThis() {
-		return this;
-	}
-
-	@Override
 	public Class<CollectionResult> getResponseType() {
 		return CollectionResult.class;
 	}
 
+	public static class Builder implements SearchWithQuery<Builder> {
+		CollectionSearch collectionSearch;
+
+		private Builder(String apiKey, RestTemplate restTemplate) {
+			this.collectionSearch = new CollectionSearch(apiKey, restTemplate);
+		}
+
+		public Builder query(String query) {
+			collectionSearch.query(query);
+			return this;
+		}
+
+		public Builder page(Integer page) {
+			collectionSearch.page(page);
+			return this;
+		}
+
+		public Builder language(String language) {
+			collectionSearch.language = language;
+			return this;
+		}
+
+		public CollectionSearch build() {
+			return collectionSearch;
+		}
+
+	}
 }

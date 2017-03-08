@@ -1,7 +1,9 @@
 package com.vliolios.tmdb.search;
 
 
-public class MovieSearch extends Search<MovieSearch, MovieResult> {
+import org.springframework.web.client.RestTemplate;
+
+public class MovieSearch extends Search<MovieResult> {
 	
 	private String language;
 	private Boolean includeAdult;
@@ -9,35 +11,14 @@ public class MovieSearch extends Search<MovieSearch, MovieResult> {
 	private Integer year;
 	private Integer  primaryReleaseYear;
 
-	public MovieSearch(String apiKey) {
-		super(apiKey);
-	}
-	
-	public MovieSearch language(String language) {
-    	this.language = language;
-    	return this;
-    }
-	
-	public MovieSearch includeAdult(Boolean includeAdult) {
-		this.includeAdult = includeAdult;
-		return this;
+	private MovieSearch(String apiKey, RestTemplate restTemplate) {
+		super(apiKey, restTemplate);
 	}
 
-	public MovieSearch region(String region) {
-		this.region = region;
-		return this;
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
+		return new Builder(apiKey, restTemplate);
 	}
-	
-	public MovieSearch year(Integer year) {
-		this.year = year;
-		return this;
-	}
-	
-	public MovieSearch primaryReleaseYear(Integer primaryReleaseYear) {
-		this.primaryReleaseYear = primaryReleaseYear;
-		return this;
-	}
-	
+
 	public String getLanguage() {
 		return language;
 	}
@@ -86,13 +67,55 @@ public class MovieSearch extends Search<MovieSearch, MovieResult> {
 	}
 
 	@Override
-	public MovieSearch getThis() {
-		return this;
-	}
-
-	@Override
 	public Class<MovieResult> getResponseType() {
 		return MovieResult.class;
+	}
+
+	public static class Builder implements SearchWithQuery<Builder> {
+		MovieSearch movieSearch;
+
+		private Builder(String apiKey, RestTemplate restTemplate) {
+			this.movieSearch = new MovieSearch(apiKey, restTemplate);
+		}
+
+		public Builder query(String query) {
+			movieSearch.query(query);
+			return this;
+		}
+
+		public Builder page(Integer page) {
+			movieSearch.page(page);
+			return this;
+		}
+
+		public Builder language(String language) {
+			movieSearch.language = language;
+			return this;
+		}
+
+		public Builder includeAdult(Boolean includeAdult) {
+			movieSearch.includeAdult = includeAdult;
+			return this;
+		}
+
+		public Builder region(String region) {
+			movieSearch.region = region;
+			return this;
+		}
+
+		public Builder year(Integer year) {
+			movieSearch.year = year;
+			return this;
+		}
+
+		public Builder primaryReleaseYear(Integer primaryReleaseYear) {
+			movieSearch.primaryReleaseYear = primaryReleaseYear;
+			return this;
+		}
+
+		public MovieSearch build() {
+			return movieSearch;
+		}
 	}
 
 }

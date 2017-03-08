@@ -1,57 +1,48 @@
 package com.vliolios.tmdb;
 
-import com.vliolios.tmdb.search.CollectionSearch;
-import com.vliolios.tmdb.search.CompanySearch;
-import com.vliolios.tmdb.search.KeywordSearch;
-import com.vliolios.tmdb.search.MovieSearch;
-import com.vliolios.tmdb.search.MultiSearch;
-import com.vliolios.tmdb.search.PeopleSearch;
-import com.vliolios.tmdb.search.TVSearch;
+import com.vliolios.tmdb.search.*;
+import org.springframework.web.client.RestTemplate;
 
-/**
- *
- * @author vliolios
- */
 public class API {
 
-    private final String apiKey;
-
-    public API(String apiKey) {
-    	this.apiKey = apiKey;
-    }
-
-	public SearchSelector search() {
-		return new SearchSelector();
+	public static SearchSelector search(String apiKey) {
+		return new SearchSelector(apiKey);
     }
 	
-	public class SearchSelector {
-		
-		public TVSearch tv() {
-			return new TVSearch(apiKey);
+	public static class SearchSelector {
+
+    	private final String apiKey;
+
+		public SearchSelector(String apiKey) {
+			this.apiKey = apiKey;
+		}
+
+		public SearchWithQuery<TVSearch.Builder> tv() {
+			return TVSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public MovieSearch movie() {
-			return new MovieSearch(apiKey);
+		public SearchWithQuery<MovieSearch.Builder> movie() {
+			return MovieSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public CollectionSearch collection() {
-			return new CollectionSearch(apiKey);
+		public SearchWithQuery<CollectionSearch.Builder> collection() {
+			return CollectionSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public KeywordSearch keyword() {
-			return new KeywordSearch(apiKey);
+		public SearchWithQuery<KeywordSearch.Builder> keyword() {
+			return KeywordSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public PeopleSearch people() {
-			return new PeopleSearch(apiKey);
+		public SearchWithQuery<PeopleSearch.Builder> people() {
+			return PeopleSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public MultiSearch multi() {
-			return new MultiSearch(apiKey);
+		public SearchWithQuery<MultiSearch.Builder> multi() {
+			return MultiSearch.apiKey(apiKey, new RestTemplate());
 		}
 		
-		public CompanySearch company() {
-			return new CompanySearch(apiKey);
+		public SearchWithQuery<CompanySearch.Builder> company() {
+			return CompanySearch.apiKey(apiKey, new RestTemplate());
 		}
 		
 	}

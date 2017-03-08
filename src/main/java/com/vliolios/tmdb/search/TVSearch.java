@@ -1,23 +1,19 @@
 package com.vliolios.tmdb.search;
 
-public class TVSearch extends Search<TVSearch, TVResult> {
+import org.springframework.web.client.RestTemplate;
+
+public class TVSearch extends Search<TVResult> {
 	
 	private String language;
 	private Integer firstAirDateYear;
 
-	public TVSearch(String apiKey) {
-		super(apiKey);
+	private TVSearch(String apiKey, RestTemplate restTemplate) {
+		super(apiKey, restTemplate);
 	}
-	
-	public TVSearch language(String language) {
-    	this.language = language;
-    	return this;
-    }
-	
-	public TVSearch firstAidDateYear(Integer firstAirDateYear) {
-    	this.firstAirDateYear = firstAirDateYear;
-    	return this;
-    }
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
+		return new TVSearch.Builder(apiKey, restTemplate);
+	}
 	
 	public String getLanguage() {
 		return language;
@@ -45,13 +41,40 @@ public class TVSearch extends Search<TVSearch, TVResult> {
 	}
 
 	@Override
-	public TVSearch getThis() {
-		return this;
-	}
-
-	@Override
 	public Class<TVResult> getResponseType() {
 		return TVResult.class;
 	}
-	
+
+	public static class Builder implements SearchWithQuery<Builder> {
+		TVSearch tvSearch;
+
+		private Builder(String apiKey, RestTemplate restTemplate) {
+			this.tvSearch = new TVSearch(apiKey, restTemplate);
+		}
+
+		public Builder query(String query) {
+			tvSearch.query(query);
+			return this;
+		}
+
+		public Builder page(Integer page) {
+			tvSearch.page(page);
+			return this;
+		}
+
+		public Builder language(String language) {
+			tvSearch.language = language;
+			return this;
+		}
+
+		public Builder firstAirDateYear(Integer firstAirDateYear) {
+			tvSearch.firstAirDateYear = firstAirDateYear;
+			return this;
+		}
+
+		public TVSearch build() {
+			return tvSearch;
+		}
+
+	}
 }

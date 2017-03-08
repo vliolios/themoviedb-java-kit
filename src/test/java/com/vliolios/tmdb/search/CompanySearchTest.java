@@ -49,15 +49,8 @@ public class CompanySearchTest {
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		CompanySearch search = new CompanySearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_COMPANY_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<CompanyResult> response = search.query("lucas").page(0).submit();
+		Response<CompanyResult> response = CompanySearch.apiKey("abc", restTemplate).query("lucas").page(0).build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/company?api_key=abc&query=lucas&page=0", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -76,15 +69,8 @@ public class CompanySearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		CompanySearch search = new CompanySearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_COMPANY_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));			
-		Response<CompanyResult> response = search.query("lucas").page(0).submit();
+		Response<CompanyResult> response = CompanySearch.apiKey("abc", restTemplate).query("lucas").page(0).build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/company?api_key=abc&query=lucas&page=0", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -98,15 +84,8 @@ public class CompanySearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		CompanySearch search = new CompanySearch("abc") {
-			@Override
-			protected RestTemplate getRestTemplate() {
-				return restTemplate;
-			}
-		};
-		
 		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<CompanyResult> response = search.query("lucas").submit();
+		Response<CompanyResult> response = CompanySearch.apiKey("abc", restTemplate).query("lucas").build().submit();
 		
 		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/company?api_key=abc&query=lucas", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -120,24 +99,19 @@ public class CompanySearchTest {
 	
 	@Test
 	public void testQuery() {
-		CompanySearch search = new CompanySearch("abc");
-		search.query("lucas");
-		
+		CompanySearch search = CompanySearch.apiKey("abc", restTemplate).query("lucas").build();
 		assertThat("The query is incorrect", search.getQuery(), equalTo("lucas"));
 	}
 
 	@Test
 	public void testPage() {
-		CompanySearch search = new CompanySearch("abc");
-		search.page(1);
-		
+		CompanySearch search = CompanySearch.apiKey("abc", restTemplate).query("lucas").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), equalTo(1));
 	}
 
 	@Test
 	public void testGetType() {
-		CompanySearch search = new CompanySearch("abc");
-		
+		CompanySearch search = CompanySearch.apiKey("abc", restTemplate).query("lucas").build();
 		assertThat("The type is incorrect", search.getType(), equalTo("company"));
 	}
 

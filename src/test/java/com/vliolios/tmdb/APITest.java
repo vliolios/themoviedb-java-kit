@@ -16,13 +16,12 @@ public class APITest {
 
 	@Test
 	public void testSearch() {
-		API api = new API("abc");
-		assertThat("The API key doesn't match", api.search().tv().getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search().movie().getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search().company().getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search().collection().getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search().keyword().getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search().people().getApiKey(), equalTo("abc"));
-		assertThat("The API key doesn't match", api.search().multi().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").tv().query("westworld").build().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").movie().query("matrix").build().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").company().query("lucas").build().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").collection().query("matrix").build().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").keyword().query("matrix").build().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").people().query("cooper").build().getApiKey(), equalTo("abc"));
+		assertThat("The API key doesn't match", API.search("abc").multi().query("matrix").build().getApiKey(), equalTo("abc"));
 	}
 }
