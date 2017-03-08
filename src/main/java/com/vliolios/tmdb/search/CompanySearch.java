@@ -8,7 +8,7 @@ public class CompanySearch extends Search<CompanyResult> {
 		super(apiKey, restTemplate);
 	}
 
-	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
 		return new Builder(apiKey, restTemplate);
 	}
 
@@ -22,7 +22,7 @@ public class CompanySearch extends Search<CompanyResult> {
 		return CompanyResult.class;
 	}
 
-	public static class Builder implements SearchWithQuery {
+	public static class Builder implements SearchWithQuery<Builder> {
 		CompanySearch companySearch;
 
 		private Builder(String apiKey, RestTemplate restTemplate) {
@@ -43,10 +43,6 @@ public class CompanySearch extends Search<CompanyResult> {
 			return companySearch;
 		}
 
-	}
-
-	public interface SearchWithQuery {
-		Builder query(String query);
 	}
 
 }

@@ -11,7 +11,7 @@ public class TVSearch extends Search<TVResult> {
 		super(apiKey, restTemplate);
 	}
 
-	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
 		return new TVSearch.Builder(apiKey, restTemplate);
 	}
 	
@@ -45,7 +45,7 @@ public class TVSearch extends Search<TVResult> {
 		return TVResult.class;
 	}
 
-	public static class Builder implements SearchWithQuery {
+	public static class Builder implements SearchWithQuery<Builder> {
 		TVSearch tvSearch;
 
 		private Builder(String apiKey, RestTemplate restTemplate) {
@@ -76,9 +76,5 @@ public class TVSearch extends Search<TVResult> {
 			return tvSearch;
 		}
 
-	}
-
-	public interface SearchWithQuery {
-		Builder query(String query);
 	}
 }

@@ -10,7 +10,7 @@ public class CollectionSearch extends Search<CollectionResult> {
 		super(apiKey, restTemplate);
 	}
 
-	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
 		return new Builder(apiKey, restTemplate);
 	}
 
@@ -37,7 +37,7 @@ public class CollectionSearch extends Search<CollectionResult> {
 		return CollectionResult.class;
 	}
 
-	public static class Builder implements SearchWithQuery {
+	public static class Builder implements SearchWithQuery<Builder> {
 		CollectionSearch collectionSearch;
 
 		private Builder(String apiKey, RestTemplate restTemplate) {
@@ -63,9 +63,5 @@ public class CollectionSearch extends Search<CollectionResult> {
 			return collectionSearch;
 		}
 
-	}
-
-	public interface SearchWithQuery {
-		Builder query(String query);
 	}
 }

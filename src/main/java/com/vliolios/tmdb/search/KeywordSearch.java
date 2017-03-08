@@ -8,7 +8,7 @@ public class KeywordSearch extends Search<KeywordResult> {
 		super(apiKey, restTemplate);
 	}
 
-	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
 		return new Builder(apiKey, restTemplate);
 	}
 
@@ -22,7 +22,7 @@ public class KeywordSearch extends Search<KeywordResult> {
 		return KeywordResult.class;
 	}
 
-	public static class Builder implements KeywordSearch.SearchWithQuery {
+	public static class Builder implements SearchWithQuery<Builder> {
 		KeywordSearch keywordSearch;
 
 		private Builder(String apiKey, RestTemplate restTemplate) {
@@ -43,10 +43,6 @@ public class KeywordSearch extends Search<KeywordResult> {
 			return keywordSearch;
 		}
 
-	}
-
-	public interface SearchWithQuery {
-		KeywordSearch.Builder query(String query);
 	}
 
 }

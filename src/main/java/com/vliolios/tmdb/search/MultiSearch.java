@@ -12,7 +12,7 @@ public class MultiSearch extends Search<MultiResult> {
 		super(apiKey, restTemplate);
 	}
 
-	public static SearchWithQuery apiKey(String apiKey, RestTemplate restTemplate) {
+	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
 		return new Builder(apiKey, restTemplate);
 	}
 	
@@ -54,7 +54,7 @@ public class MultiSearch extends Search<MultiResult> {
 		return MultiResult.class;
 	}
 
-	public static class Builder implements SearchWithQuery {
+	public static class Builder implements SearchWithQuery<Builder> {
 		MultiSearch multiSearch;
 
 		private Builder(String apiKey, RestTemplate restTemplate) {
@@ -90,9 +90,4 @@ public class MultiSearch extends Search<MultiResult> {
 			return multiSearch;
 		}
 	}
-
-	public interface SearchWithQuery {
-		Builder query(String query);
-	}
-
 }
