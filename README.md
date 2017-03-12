@@ -14,7 +14,7 @@ This is a Java library for version 3 of the [API](https://www.themoviedb.org/doc
 * Search People
 * Search TV Shows 
 
-_For more details regarding the endpoints check the [TMDb API Documentation](https://developers.themoviedb.org/3/)_
+_For more details regarding the endpoints check the [TMDb API Documentation](https://developers.themoviedb.org/3/)._
 
 *****
 
@@ -62,6 +62,6 @@ Response<TVResult> response = API.search("your-api-key").tv().query("Westworld")
                                  .page(1).firstAirDateYear(2016).build().submit();
 ```
 
-_To obtain an API key you have to register an account with TMDb. More details [here](https://www.themoviedb.org/documentation/api)_
+_To obtain an API key you have to register an account with TMDb. More details [here](https://www.themoviedb.org/documentation/api)._
 
 *****
