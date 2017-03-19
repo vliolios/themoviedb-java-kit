@@ -1,19 +1,31 @@
 package com.vliolios.tmdb.search;
 
-import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
 
-public class MultiSearch extends Search<MultiResult> {
+public class MultiSearch extends Search {
 	
 	private String language;
 	private Boolean includeAdult;
 	private String region;
 
-	private MultiSearch(String apiKey, RestTemplate restTemplate) {
-		super(apiKey, restTemplate);
+	private MultiSearch(String apiKey, String baseUrl) {
+		super(apiKey, baseUrl);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
-		return new Builder(apiKey, restTemplate);
+	public Response<MultiResult> submit() {
+		try {
+			return getSearchService().multi(getApiKey(), getQuery(), getPage(), language, includeAdult, region).execute().body();
+		} catch (IOException e) {
+			Response<MultiResult> invalidResponse = new Response<>();
+			invalidResponse.setStatusCode(500);
+			invalidResponse.setStatusMessage("Failed to parse the response body");
+			invalidResponse.setSuccess(false);
+			return invalidResponse;
+		}
+	}
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
+		return new Builder(apiKey, baseUrl);
 	}
 	
 	public String getLanguage() {
@@ -27,38 +39,17 @@ public class MultiSearch extends Search<MultiResult> {
 	public String getRegion() {
 		return region;
 	}
-	
-	@Override
-	public String build() {
-		StringBuilder sb = new StringBuilder(super.build());
-		if (this.language != null) {
-		    sb.append("&language=").append(this.language);
-		}
-		if (includeAdult != null) {
-			sb.append("&include_adult=").append(includeAdult.toString());
-		}
-		if (region != null) {
-			sb.append("&region=").append(region);
-		}
-		return sb.toString();
-		
-	}
 
 	@Override
 	public String getType() {
 		return "multi";
 	}
 
-	@Override
-	public Class<MultiResult> getResponseType() {
-		return MultiResult.class;
-	}
-
 	public static class Builder implements SearchWithQuery<Builder> {
 		MultiSearch multiSearch;
 
-		private Builder(String apiKey, RestTemplate restTemplate) {
-			this.multiSearch = new MultiSearch(apiKey, restTemplate);
+		private Builder(String apiKey, String baseUrl) {
+			this.multiSearch = new MultiSearch(apiKey, baseUrl);
 		}
 
 		public Builder query(String query) {

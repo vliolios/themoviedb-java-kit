@@ -1,54 +1,38 @@
 package com.vliolios.tmdb.search;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.nio.charset.Charset;
-
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import com.vliolios.tmdb.search.MovieResult;
-import com.vliolios.tmdb.search.MovieSearch;
-import com.vliolios.tmdb.search.Response;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class MovieSearchTest {
-	
-	RestTemplate restTemplate = mock(RestTemplate.class); 
-	
+
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(8090);
+
 	private static final String SEARCH_MOVIE_RESPONSE_JSON_SUCCESS = "{\n" +
 			"	\"page\": 1," + 
 			"  \"results\": [" + 
 			"    {" + 
-			"      \"poster_path\": \"/pMdTc3kYCD1869UX6cdYUT8Xe49.jpg\",\n" + ////////////
+			"      \"poster_path\": \"/pMdTc3kYCD1869UX6cdYUT8Xe49.jpg\",\n" +
 			"      \"adult\": false,\n" + 
-			"      \"overview\": \"Feature-length documentary about the rise of Marvel Studios and their films leading up to, and including, The Avengers\",\n" + ///////
+			"      \"overview\": \"Feature-length documentary about the rise of Marvel Studios and their films leading up to, and including, The Avengers\",\n" +
 			"      \"release_date\": \"2012-09-25\",\n" + 
-			"      \"genre_ids\": [\n" + //////////////
+			"      \"genre_ids\": [\n" +
 			"        99\n" + 
 			"      ],\n" + 
-			"      \"id\": 161097,\n" +    /////////////////
+			"      \"id\": 161097,\n" +
 			"      \"original_title\": \"Marvel Studios: Building a Cinematic Universe\",\n" + 
-			"      \"original_language\": \"en\",\n" + ////////////////////////
+			"      \"original_language\": \"en\",\n" +
 			"      \"title\": \"Building a Cinematic Universe\",\n" + 
-			"      \"backdrop_path\": \"/yeKT2gNFxHGbTT3Htj5PE9IerGJ.jpg\",\n" +  ////////////
-			"      \"popularity\": 1.136598,\n" + /////////////////
-			"      \"vote_count\": 4,\n" + ////////////////////
+			"      \"backdrop_path\": \"/yeKT2gNFxHGbTT3Htj5PE9IerGJ.jpg\",\n" +
+			"      \"popularity\": 1.136598,\n" +
+			"      \"vote_count\": 4,\n" +
 			"      \"video\": false,\n" + 
-			"      \"vote_average\": 3.88\n" + //////////
+			"      \"vote_average\": 3.88\n" +
 			"    }\n" + 
 			"  ],\n" + 
 			"  \"total_results\": 1,\n" + 
@@ -60,13 +44,15 @@ public class MovieSearchTest {
 			"  \"success\": false," + 
 			"  \"status_code\": 7" + 
 			"}";
+
+	private String baseUrl = "http://localhost:8090";
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_MOVIE_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<MovieResult> response = MovieSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/movie?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US&year=2000&primary_release_year=1990", String.class);
+		stubFor(get(urlPathEqualTo("/search/movie")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(SEARCH_MOVIE_RESPONSE_JSON_SUCCESS)));
+		Response<MovieResult> response = MovieSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), is(1));
@@ -95,10 +81,10 @@ public class MovieSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_MOVIE_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));
-		Response<MovieResult> response = MovieSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/movie?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US&year=2000&primary_release_year=1990", String.class);
+		stubFor(get(urlPathEqualTo("/search/movie")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(SEARCH_MOVIE_RESPONSE_JSON_ERROR)));
+		Response<MovieResult> response = MovieSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -110,10 +96,10 @@ public class MovieSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<MovieResult> response = MovieSearch.apiKey("abc", restTemplate).query("matrix").build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/movie?api_key=abc&query=matrix", String.class);
+		stubFor(get(urlPathEqualTo("/search/movie")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody("invalid json")));
+		Response<MovieResult> response = MovieSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -125,50 +111,50 @@ public class MovieSearchTest {
 	
 	@Test
 	public void testQuery() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").build();
-		assertThat("The query is incorrect", search.getQuery(), equalTo("matrix"));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").build();
+		assertThat("The query is incorrect", search.getQuery(), is("matrix"));
 	}
 	
 	@Test
 	public void testPage() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").page(1).build();
-		assertThat("The page is incorrect", search.getPage(), equalTo(1));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").page(1).build();
+		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").language("en").build();
-		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").language("en").build();
+		assertThat("The language is incorrect", search.getLanguage(), is("en"));
 	}
 
 	@Test
 	public void testIncludeAdult() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").includeAdult(true).build();
-		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), equalTo(true));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").includeAdult(true).build();
+		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), is(true));
 	}
 
 	@Test
 	public void testRegion() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").region("US").build();
-		assertThat("The region is incorrect", search.getRegion(), equalTo("US"));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").region("US").build();
+		assertThat("The region is incorrect", search.getRegion(), is("US"));
 	}
 
 	@Test
 	public void testYear() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").year(2000).build();
-		assertThat("The year is incorrect", search.getYear(), equalTo(2000));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").year(2000).build();
+		assertThat("The year is incorrect", search.getYear(), is(2000));
 	}
 
 	@Test
 	public void testPrimaryReleaseYear() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").primaryReleaseYear(2000).build();
-		assertThat("The primary release year is incorrect", search.getPrimaryReleaseYear(), equalTo(2000));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").primaryReleaseYear(2000).build();
+		assertThat("The primary release year is incorrect", search.getPrimaryReleaseYear(), is(2000));
 	}
 	
 	@Test
 	public void testGetType() {
-		MovieSearch search = MovieSearch.apiKey("abc", restTemplate).query("matrix").build();
-		assertThat("The type is incorrect", search.getType(), equalTo("movie"));
+		MovieSearch search = MovieSearch.apiKey("abc", baseUrl).query("matrix").build();
+		assertThat("The type is incorrect", search.getType(), is("movie"));
 	}
 
 }

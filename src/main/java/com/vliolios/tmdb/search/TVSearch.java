@@ -1,18 +1,18 @@
 package com.vliolios.tmdb.search;
 
-import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
 
-public class TVSearch extends Search<TVResult> {
+public class TVSearch extends Search {
 	
 	private String language;
 	private Integer firstAirDateYear;
 
-	private TVSearch(String apiKey, RestTemplate restTemplate) {
-		super(apiKey, restTemplate);
+	private TVSearch(String apiKey, String baseUrl) {
+		super(apiKey, baseUrl);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
-		return new TVSearch.Builder(apiKey, restTemplate);
+	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
+		return new TVSearch.Builder(apiKey, baseUrl);
 	}
 	
 	public String getLanguage() {
@@ -23,16 +23,18 @@ public class TVSearch extends Search<TVResult> {
 		return firstAirDateYear;
 	}
 
+
 	@Override
-	protected String build() {
-		StringBuilder sb = new StringBuilder(super.build());
-		if (this.language != null) {
-		    sb.append("&language=").append(this.language);
+	public Response<TVResult> submit() {
+		try {
+			return getSearchService().tv(getApiKey(), getQuery(), getPage(), language, firstAirDateYear).execute().body();
+		} catch (IOException e) {
+			Response<TVResult> invalidResponse = new Response<>();
+			invalidResponse.setStatusCode(500);
+			invalidResponse.setStatusMessage("Failed to parse the response body");
+			invalidResponse.setSuccess(false);
+			return invalidResponse;
 		}
-		if (this.firstAirDateYear != null) {
-		    sb.append("&first_air_date_year=").append(this.firstAirDateYear);
-		}
-		return sb.toString();
 	}
 
 	@Override
@@ -40,16 +42,11 @@ public class TVSearch extends Search<TVResult> {
 		return "tv";
 	}
 
-	@Override
-	public Class<TVResult> getResponseType() {
-		return TVResult.class;
-	}
-
 	public static class Builder implements SearchWithQuery<Builder> {
 		TVSearch tvSearch;
 
-		private Builder(String apiKey, RestTemplate restTemplate) {
-			this.tvSearch = new TVSearch(apiKey, restTemplate);
+		private Builder(String apiKey, String baseUrl) {
+			this.tvSearch = new TVSearch(apiKey, baseUrl);
 		}
 
 		public Builder query(String query) {
