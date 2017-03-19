@@ -1,15 +1,27 @@
 package com.vliolios.tmdb.search;
 
-import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
 
-public class KeywordSearch extends Search<KeywordResult> {
+public class KeywordSearch extends Search {
 
-	private KeywordSearch(String apiKey, RestTemplate restTemplate) {
-		super(apiKey, restTemplate);
+	private KeywordSearch(String apiKey, String baseUrl) {
+		super(apiKey, baseUrl);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
-		return new Builder(apiKey, restTemplate);
+	public Response<KeywordResult> submit() {
+		try {
+			return getSearchService().keyword(getApiKey(), getQuery(), getPage()).execute().body();
+		} catch (IOException e) {
+			Response<KeywordResult> invalidResponse = new Response<>();
+			invalidResponse.setStatusCode(500);
+			invalidResponse.setStatusMessage("Failed to parse the response body");
+			invalidResponse.setSuccess(false);
+			return invalidResponse;
+		}
+	}
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
+		return new Builder(apiKey, baseUrl);
 	}
 
 	@Override
@@ -17,16 +29,11 @@ public class KeywordSearch extends Search<KeywordResult> {
 		return "keyword";
 	}
 
-	@Override
-	public Class<KeywordResult> getResponseType() {
-		return KeywordResult.class;
-	}
-
 	public static class Builder implements SearchWithQuery<Builder> {
 		KeywordSearch keywordSearch;
 
-		private Builder(String apiKey, RestTemplate restTemplate) {
-			this.keywordSearch = new KeywordSearch(apiKey, restTemplate);
+		private Builder(String apiKey, String baseUrl) {
+			this.keywordSearch = new KeywordSearch(apiKey, baseUrl);
 		}
 
 		public Builder query(String query) {

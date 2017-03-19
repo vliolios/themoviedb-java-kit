@@ -1,48 +1,57 @@
 package com.vliolios.tmdb;
 
 import com.vliolios.tmdb.search.*;
-import org.springframework.web.client.RestTemplate;
 
 public class API {
 
-	public static SearchSelector search(String apiKey) {
-		return new SearchSelector(apiKey);
+	private static final String DEFAULT_BASE_URL = "https://api.themoviedb.org/3/";
+
+	private String apiKey;
+	private String baseUrl;
+
+	public API(String apiKey) {
+		this(apiKey, DEFAULT_BASE_URL);
+	}
+
+	API(String apiKey, String baseUrl) {
+		this.apiKey = apiKey;
+		this.baseUrl = baseUrl;
+	}
+
+	public SearchSelector search() {
+		return new SearchSelector();
     }
 	
-	public static class SearchSelector {
+	public class SearchSelector {
 
-    	private final String apiKey;
-
-		public SearchSelector(String apiKey) {
-			this.apiKey = apiKey;
-		}
+		private SearchSelector() {}
 
 		public SearchWithQuery<TVSearch.Builder> tv() {
-			return TVSearch.apiKey(apiKey, new RestTemplate());
+			return TVSearch.apiKey(apiKey,  baseUrl);
 		}
 		
 		public SearchWithQuery<MovieSearch.Builder> movie() {
-			return MovieSearch.apiKey(apiKey, new RestTemplate());
+			return MovieSearch.apiKey(apiKey, baseUrl);
 		}
 		
 		public SearchWithQuery<CollectionSearch.Builder> collection() {
-			return CollectionSearch.apiKey(apiKey, new RestTemplate());
+			return CollectionSearch.apiKey(apiKey, baseUrl);
 		}
 		
 		public SearchWithQuery<KeywordSearch.Builder> keyword() {
-			return KeywordSearch.apiKey(apiKey, new RestTemplate());
+			return KeywordSearch.apiKey(apiKey, baseUrl);
 		}
 		
 		public SearchWithQuery<PeopleSearch.Builder> people() {
-			return PeopleSearch.apiKey(apiKey, new RestTemplate());
+			return PeopleSearch.apiKey(apiKey, baseUrl);
 		}
 		
 		public SearchWithQuery<MultiSearch.Builder> multi() {
-			return MultiSearch.apiKey(apiKey, new RestTemplate());
+			return MultiSearch.apiKey(apiKey, baseUrl);
 		}
 		
 		public SearchWithQuery<CompanySearch.Builder> company() {
-			return CompanySearch.apiKey(apiKey, new RestTemplate());
+			return CompanySearch.apiKey(apiKey, baseUrl);
 		}
 		
 	}

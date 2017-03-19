@@ -1,9 +1,9 @@
 package com.vliolios.tmdb.search;
 
 
-import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
 
-public class MovieSearch extends Search<MovieResult> {
+public class MovieSearch extends Search {
 	
 	private String language;
 	private Boolean includeAdult;
@@ -11,12 +11,24 @@ public class MovieSearch extends Search<MovieResult> {
 	private Integer year;
 	private Integer  primaryReleaseYear;
 
-	private MovieSearch(String apiKey, RestTemplate restTemplate) {
-		super(apiKey, restTemplate);
+	private MovieSearch(String apiKey, String baseUrl) {
+		super(apiKey, baseUrl);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
-		return new Builder(apiKey, restTemplate);
+	public Response<MovieResult> submit() {
+		try {
+			return getSearchService().movie(getApiKey(), getQuery(), getPage(), language, includeAdult, region, year, primaryReleaseYear).execute().body();
+		} catch (IOException e) {
+			Response<MovieResult> invalidResponse = new Response<>();
+			invalidResponse.setStatusCode(500);
+			invalidResponse.setStatusMessage("Failed to parse the response body");
+			invalidResponse.setSuccess(false);
+			return invalidResponse;
+		}
+	}
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
+		return new Builder(apiKey, baseUrl);
 	}
 
 	public String getLanguage() {
@@ -38,44 +50,17 @@ public class MovieSearch extends Search<MovieResult> {
 	public Integer getPrimaryReleaseYear() {
 		return primaryReleaseYear;
 	}
-	
-	@Override
-	public String build() {
-		StringBuilder sb = new StringBuilder(super.build());
-		if (this.language != null) {
-		    sb.append("&language=").append(this.language);
-		}
-		if (includeAdult != null) {
-			sb.append("&include_adult=").append(includeAdult.toString());
-		}
-		if (region != null) {
-			sb.append("&region=").append(region);
-		}
-		if (year != null) {
-			sb.append("&year=").append(year);
-		}
-		if (primaryReleaseYear != null) {
-			sb.append("&primary_release_year=").append(primaryReleaseYear);
-		}
-		return sb.toString();
-		
-	}
-	
+
 	@Override
 	public String getType() {
 		return "movie";
 	}
 
-	@Override
-	public Class<MovieResult> getResponseType() {
-		return MovieResult.class;
-	}
-
 	public static class Builder implements SearchWithQuery<Builder> {
 		MovieSearch movieSearch;
 
-		private Builder(String apiKey, RestTemplate restTemplate) {
-			this.movieSearch = new MovieSearch(apiKey, restTemplate);
+		private Builder(String apiKey, String baseUrl) {
+			this.movieSearch = new MovieSearch(apiKey, baseUrl);
 		}
 
 		public Builder query(String query) {

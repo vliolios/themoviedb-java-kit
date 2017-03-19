@@ -1,15 +1,27 @@
 package com.vliolios.tmdb.search;
 
-import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
 
-public class CompanySearch extends Search<CompanyResult> {
+public class CompanySearch extends Search {
 
-	private CompanySearch(String apiKey, RestTemplate restTemplate) {
-		super(apiKey, restTemplate);
+	private CompanySearch(String apiKey, String baseUrl) {
+		super(apiKey, baseUrl);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
-		return new Builder(apiKey, restTemplate);
+	public Response<CompanyResult> submit() {
+		try {
+			return getSearchService().company(getApiKey(), getQuery(), getPage()).execute().body();
+		} catch (IOException e) {
+			Response<CompanyResult> invalidResponse = new Response<>();
+			invalidResponse.setStatusCode(500);
+			invalidResponse.setStatusMessage("Failed to parse the response body");
+			invalidResponse.setSuccess(false);
+			return invalidResponse;
+		}
+	}
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
+		return new Builder(apiKey, baseUrl);
 	}
 
 	@Override
@@ -17,16 +29,11 @@ public class CompanySearch extends Search<CompanyResult> {
 		return "company";
 	}
 
-	@Override
-	public Class<CompanyResult> getResponseType() {
-		return CompanyResult.class;
-	}
-
 	public static class Builder implements SearchWithQuery<Builder> {
 		CompanySearch companySearch;
 
-		private Builder(String apiKey, RestTemplate restTemplate) {
-			this.companySearch = new CompanySearch(apiKey, restTemplate);
+		private Builder(String apiKey, String baseUrl) {
+			this.companySearch = new CompanySearch(apiKey, baseUrl);
 		}
 
 		public Builder query(String query) {

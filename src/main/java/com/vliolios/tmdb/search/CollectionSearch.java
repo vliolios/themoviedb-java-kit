@@ -1,30 +1,33 @@
 package com.vliolios.tmdb.search;
 
-import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
 
-public class CollectionSearch extends Search<CollectionResult> {
+public class CollectionSearch extends Search {
 
 	private String language;
 	
-	private CollectionSearch(String apiKey, RestTemplate restTemplate) {
-		super(apiKey, restTemplate);
+	private CollectionSearch(String apiKey, String baseUrl) {
+		super(apiKey, baseUrl);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, RestTemplate restTemplate) {
-		return new Builder(apiKey, restTemplate);
+	public Response<CollectionResult> submit() {
+		try {
+			return getSearchService().collection(getApiKey(), getQuery(), getPage(), language).execute().body();
+		} catch (IOException e) {
+			Response<CollectionResult> invalidResponse = new Response<>();
+			invalidResponse.setStatusCode(500);
+			invalidResponse.setStatusMessage("Failed to parse the response body");
+			invalidResponse.setSuccess(false);
+			return invalidResponse;
+		}
+	}
+
+	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
+		return new Builder(apiKey, baseUrl);
 	}
 
 	public String getLanguage() {
 		return language;
-	}
-	
-	@Override
-	protected String build() {
-		StringBuilder sb = new StringBuilder(super.build());
-		if (this.language != null) {
-		    sb.append("&language=").append(this.language);
-		}
-		return sb.toString();
 	}
 
 	@Override
@@ -32,16 +35,11 @@ public class CollectionSearch extends Search<CollectionResult> {
 		return "collection";
 	}
 
-	@Override
-	public Class<CollectionResult> getResponseType() {
-		return CollectionResult.class;
-	}
-
 	public static class Builder implements SearchWithQuery<Builder> {
 		CollectionSearch collectionSearch;
 
-		private Builder(String apiKey, RestTemplate restTemplate) {
-			this.collectionSearch = new CollectionSearch(apiKey, restTemplate);
+		private Builder(String apiKey, String baseUrl) {
+			this.collectionSearch = new CollectionSearch(apiKey, baseUrl);
 		}
 
 		public Builder query(String query) {

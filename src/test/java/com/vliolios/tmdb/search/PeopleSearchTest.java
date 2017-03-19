@@ -1,34 +1,18 @@
 package com.vliolios.tmdb.search;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.nio.charset.Charset;
-
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import com.vliolios.tmdb.search.MultiResult;
-import com.vliolios.tmdb.search.PeopleResult;
-import com.vliolios.tmdb.search.PeopleSearch;
-import com.vliolios.tmdb.search.Response;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class PeopleSearchTest {
-	
-	RestTemplate restTemplate = mock(RestTemplate.class);
-	
+
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(8090);
+
 	private static final String SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS = "{\n" + 
 			"  \"page\": 1,\n" + 
 			"  \"results\": [\n" + 
@@ -95,13 +79,15 @@ public class PeopleSearchTest {
 			"  \"success\": false," + 
 			"  \"status_code\": 7" + 
 			"}";
+
+	private String baseUrl = "http://localhost:8090";
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS, HttpStatus.OK));
-		Response<PeopleResult> response = PeopleSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/person?api_key=abc&query=matrix&page=0&language=en&include_adult=true&region=US", String.class);
+		stubFor(get(urlPathEqualTo("/search/person")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS)));
+		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), is(1));
@@ -130,10 +116,10 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_PEOPLE_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));
-		Response<PeopleResult> response = PeopleSearch.apiKey("abc", restTemplate).query("brad").page(0).language("en").includeAdult(true).region("US").build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/person?api_key=abc&query=brad&page=0&language=en&include_adult=true&region=US", String.class);
+		stubFor(get(urlPathEqualTo("/search/person")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(SEARCH_PEOPLE_RESPONSE_JSON_ERROR)));
+		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("brad").page(0).language("en").includeAdult(true).region("US").build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -145,10 +131,10 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));
-		Response<PeopleResult> response = PeopleSearch.apiKey("abc", restTemplate).query("matrix").build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/person?api_key=abc&query=matrix", String.class);
+		stubFor(get(urlPathEqualTo("/search/person")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody("invalid json")));
+		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -160,32 +146,32 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testQuery() {
-		PeopleSearch search = PeopleSearch.apiKey("abc", restTemplate).query("Brad").build();
-		assertThat("The query is incorrect", search.getQuery(), equalTo("Brad"));
+		PeopleSearch search = PeopleSearch.apiKey("abc", baseUrl).query("Brad").build();
+		assertThat("The query is incorrect", search.getQuery(), is("Brad"));
 	}
 	
 	@Test
 	public void testPage() {
-		PeopleSearch search =PeopleSearch.apiKey("abc", restTemplate).query("Brad").page(1).build();
-		assertThat("The page is incorrect", search.getPage(), equalTo(1));
+		PeopleSearch search =PeopleSearch.apiKey("abc", baseUrl).query("Brad").page(1).build();
+		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		PeopleSearch search =PeopleSearch.apiKey("abc", restTemplate).query("Brad").language("en").build();
-		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
+		PeopleSearch search =PeopleSearch.apiKey("abc", baseUrl).query("Brad").language("en").build();
+		assertThat("The language is incorrect", search.getLanguage(), is("en"));
 	}
 
 	@Test
 	public void testIncludeAdult() {
-		PeopleSearch search =PeopleSearch.apiKey("abc", restTemplate).query("Brad").includeAdult(true).build();
-		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), equalTo(true));
+		PeopleSearch search =PeopleSearch.apiKey("abc", baseUrl).query("Brad").includeAdult(true).build();
+		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), is(true));
 	}
 
 	@Test
 	public void testRegion() {
-		PeopleSearch search = PeopleSearch.apiKey("abc", restTemplate).query("Brad").region("US").build();
-		assertThat("The region is incorrect", search.getRegion(), equalTo("US"));
+		PeopleSearch search = PeopleSearch.apiKey("abc", baseUrl).query("Brad").region("US").build();
+		assertThat("The region is incorrect", search.getRegion(), is("US"));
 	}
 
 }

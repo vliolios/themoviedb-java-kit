@@ -1,36 +1,19 @@
 package com.vliolios.tmdb.search;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.nio.charset.Charset;
-
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.anyString;
-
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import com.vliolios.tmdb.search.Response;
-import com.vliolios.tmdb.search.TVResult;
-import com.vliolios.tmdb.search.TVSearch;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class TVSearchTest {
-	
-	RestTemplate restTemplate = mock(RestTemplate.class); 
-	
-	private static final String SEARCH_TV_RESPONSE_JSON_SUCCESS = "{" + 
+
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(8090);
+
+	private static final String SEARCH_TV_RESPONSE_JSON_SUCCESS = "{" +
 			"  \"page\": 1," + 
 			"  \"results\": [" + 
 			"    {" + 
@@ -65,40 +48,14 @@ public class TVSearchTest {
 			"  \"status_code\": 7" + 
 			"}";
 
-	@Test
-	public void testQuery() {
-		TVSearch search = TVSearch.apiKey("abc", restTemplate).query("westworld").build();
-
-		assertThat("The query is incorrect", search.getQuery(), equalTo("westworld"));
-	}
-
-	@Test
-	public void testPage() {
-		TVSearch search = TVSearch.apiKey("abc", restTemplate).query("westworld").page(1).build();
-		
-		assertThat("The page is incorrect", search.getPage(), equalTo(1));
-	}
-
-	@Test
-	public void testLanguage() {
-		TVSearch search = TVSearch.apiKey("abc", restTemplate).query("westworld").language("en").build();
-		
-		assertThat("The language is incorrect", search.getLanguage(), equalTo("en"));
-	}
-
-	@Test
-	public void testFirstAidDateYear() {
-		TVSearch search = TVSearch.apiKey("abc", restTemplate).query("westworld").firstAirDateYear(2000).build();
-		
-		assertThat("The first air date year is incorrect", search.getFirstAirDateYear(), equalTo(2000));
-	}
+	private String baseUrl = "http://localhost:8090";
 	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>(SEARCH_TV_RESPONSE_JSON_SUCCESS, HttpStatus.OK));		
-		Response<TVResult> response = TVSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
+		stubFor(get(urlPathEqualTo("/search/tv")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(SEARCH_TV_RESPONSE_JSON_SUCCESS)));
+		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), is(1));
@@ -125,11 +82,10 @@ public class TVSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized", SEARCH_TV_RESPONSE_JSON_ERROR.getBytes(), Charset.forName("UTF-8")));		
-		Response<TVResult> response = TVSearch.apiKey("abc", restTemplate).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix&page=0&language=en&first_air_date_year=2000", String.class);
+		stubFor(get(urlPathEqualTo("/search/tv")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody(SEARCH_TV_RESPONSE_JSON_ERROR)));
+		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
+
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -141,11 +97,10 @@ public class TVSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
+		stubFor(get(urlPathEqualTo("/search/tv")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+				.withBody("invalid json")));
+		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
 
-		when(restTemplate.getForEntity(anyString(), eq(String.class))).thenReturn(new ResponseEntity<String>("invalid json", HttpStatus.OK));		
-		Response<TVResult> response = TVSearch.apiKey("abc", restTemplate).query("matrix").build().submit();
-		
-		verify(restTemplate, times(1)).getForEntity("https://api.themoviedb.org/3/search/tv?api_key=abc&query=matrix", String.class);
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
 		assertThat("The total results value in the response is incorrect", response.getTotalResults(), nullValue());
@@ -154,12 +109,40 @@ public class TVSearchTest {
 		assertThat("The status code value in the response is incorrect", response.getStatusCode(), is(500));
 		assertThat("The success value in the response is incorrect", response.getSuccess(), is(false));
 	}
+
+	@Test
+	public void testQuery() {
+		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").build();
+
+		assertThat("The query is incorrect", search.getQuery(), is("westworld"));
+	}
+
+	@Test
+	public void testPage() {
+		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").page(1).build();
+
+		assertThat("The page is incorrect", search.getPage(), is(1));
+	}
+
+	@Test
+	public void testLanguage() {
+		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").language("en").build();
+
+		assertThat("The language is incorrect", search.getLanguage(), is("en"));
+	}
+
+	@Test
+	public void testFirstAidDateYear() {
+		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").firstAirDateYear(2000).build();
+
+		assertThat("The first air date year is incorrect", search.getFirstAirDateYear(), equalTo(2000));
+	}
 	
 	@Test
 	public void testGetType() {
-		TVSearch search = TVSearch.apiKey("abc", restTemplate).query("westworld").build();
+		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").build();
 		
-		assertThat("The type is incorrect", search.getType(), equalTo("tv"));
+		assertThat("The type is incorrect", search.getType(), is("tv"));
 	}
 
 }
