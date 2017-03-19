@@ -21,44 +21,44 @@ _For more details regarding the endpoints check the [TMDb API Documentation](htt
 ### Usage
 ###### Search Companies
 ```java
-Response<CompanyResult> response = API.search("your-api-key").company().query("lucas").page(1)
+Response<CompanyResult> response = new API("your-api-key").search().company().query("lucas").page(1)
                                       .build().submit();
 ```
 
 ###### Search Collections
 ```java
-Response<CollectionResult> response = API.search("your-api-key").collection().query("star wars")
+Response<CollectionResult> response = new API("your-api-key").search().collection().query("star wars")
                                          .language("en").page(1).build().submit();
 ```
 
 ###### Search Keywords
 ```java
-Response<KeywordResult> response = API.search("your-api-key").keyword().query("zombie").page(1)
+Response<KeywordResult> response = new API("your-api-key").search().keyword().query("zombie").page(1)
                                       .build().submit();
 ```
 
 ###### Search Movies
 ```java
-Response<MovieResult> response = API.search("your-api-key").movie().query("matrix").language("en")
+Response<MovieResult> response = new API("your-api-key").search().movie().query("matrix").language("en")
                                     .page(1).includeAdult(false).primaryReleaseYear(2000)
-                                    .region("eu").year(2001).build().submit();
+                                    .region("GB").year(2001).build().submit();
 ```
 
 ###### Multi Search
 ```java
-Response<MultiResult> response = API.search("your-api-key").multi().query("cooper").language("en")
-                                    .page(1).region("eu").includeAdult(false).build().submit();
+Response<MultiResult> response = new API("your-api-key").search().multi().query("cooper").language("en")
+                                    .page(1).region("GB").includeAdult(false).build().submit();
 ```
 
 ###### Search People
 ```java
-Response<PeopleResult> response = API.search("your-api-key").people().query("brad").language("en")
-                                     .page(1).region("eu").includeAdult(false).build().submit();
+Response<PeopleResult> response = new API("your-api-key").search().people().query("brad").language("en")
+                                     .page(1).region("GB").includeAdult(false).build().submit();
 ```
 
 ###### Search TV Shows
 ```java
-Response<TVResult> response = API.search("your-api-key").tv().query("Westworld").language("en")
+Response<TVResult> response = new API("your-api-key").search().tv().query("Westworld").language("en")
                                  .page(1).firstAirDateYear(2016).build().submit();
 ```
 
