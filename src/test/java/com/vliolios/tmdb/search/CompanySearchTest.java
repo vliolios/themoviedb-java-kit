@@ -1,43 +1,15 @@
 package com.vliolios.tmdb.search;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class CompanySearchTest {
+public class CompanySearchTest extends WireMockTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-
-	private static final String SEARCH_COMPANY_RESPONSE_JSON_SUCCESS = "{\n" + 
-			"  \"page\": 1,\n" + 
-			"  \"results\": [\n" + 
-			"    {\n" + 
-			"      \"id\": 1,\n" + 
-			"      \"logo_path\": \"/8rUnVMVZjlmQsJ45UGotD0Uznxj.png\",\n" + 
-			"      \"name\": \"Lucasfilm\"\n" + 
-			"    }\n" + 
-			"  ],\n" + 
-			"  \"total_pages\": 1,\n" + 
-			"  \"total_results\": 1\n" + 
-			"}"; 
-	
-	private static final String SEARCH_COMPANY_RESPONSE_JSON_ERROR = "{" + 
-			"  \"status_message\": \"Invalid API key: You must be granted a valid key.\"," + 
-			"  \"success\": false," + 
-			"  \"status_code\": 7" + 
-			"}";
-
-	private String baseUrl = "http://localhost:8090";
-	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		stubFor(get(urlPathEqualTo("/search/company")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_COMPANY_RESPONSE_JSON_SUCCESS)));
+		stub("/search/company", "search-company-success.json");
 		Response<CompanyResult> response = CompanySearch.apiKey("abc", baseUrl).query("lucas").page(0).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -56,8 +28,7 @@ public class CompanySearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		stubFor(get(urlPathEqualTo("/search/company")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_COMPANY_RESPONSE_JSON_ERROR)));
+		stub("/search/company", "search-error.json");
 		Response<CompanyResult> response = CompanySearch.apiKey("abc", baseUrl).query("lucas").page(0).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -71,8 +42,7 @@ public class CompanySearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		stubFor(get(urlPathEqualTo("/search/company")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("invalid json")));
+		stub("/search/company", "search-invalid.json");
 		Response<CompanyResult> response = CompanySearch.apiKey("abc", baseUrl).query("lucas").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());

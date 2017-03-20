@@ -1,91 +1,15 @@
 package com.vliolios.tmdb.search;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class PeopleSearchTest {
+public class PeopleSearchTest extends WireMockTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-
-	private static final String SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS = "{\n" + 
-			"  \"page\": 1,\n" + 
-			"  \"results\": [\n" + 
-			"    {\n" + 
-			"      \"profile_path\": \"/2daC5DeXqwkFND0xxutbnSVKN6c.jpg\",\n" + 
-			"      \"adult\": false,\n" + 
-			"      \"id\": 51329,\n" + 
-			"      \"known_for\": [\n" + 
-			"        {\n" + 
-			"          \"poster_path\": \"/y31QB9kn3XSudA15tV7UWQ9XLuW.jpg\",\n" + 
-			"          \"adult\": false,\n" + 
-			"          \"overview\": \"Light years from Earth, 26 years after being abducted, Peter Quill finds himself the prime target of a manhunt after discovering an orb wanted by Ronan the Accuser.\",\n" + 
-			"          \"release_date\": \"2014-07-30\",\n" + 
-			"          \"original_title\": \"Guardians of the Galaxy\",\n" + 
-			"          \"genre_ids\": [\n" + 
-			"            28,\n" + 
-			"            878,\n" + 
-			"            12\n" + 
-			"          ],\n" + 
-			"          \"id\": 118340,\n" + 
-			"          \"media_type\": \"movie\",\n" + 
-			"          \"original_language\": \"en\",\n" + 
-			"          \"title\": \"Guardians of the Galaxy\",\n" + 
-			"          \"backdrop_path\": \"/bHarw8xrmQeqf3t8HpuMY7zoK4x.jpg\",\n" + 
-			"          \"popularity\": 9.267731,\n" + 
-			"          \"vote_count\": 5002,\n" + 
-			"          \"video\": false,\n" + 
-			"          \"vote_average\": 7.97\n" + 
-			"        }," +
-			" 		 {\n" + 
-			"          \"poster_path\": \"/xn3QM6aInhQp631K2lXpGFox2Kc.jpg\",\n" + 
-			"          \"popularity\": 6.605526,\n" + 
-			"          \"id\": 60866,\n" + 
-			"          \"overview\": \"A medical student who becomes a zombie joins a Coroner's Office in order to gain access to the brains she must reluctantly eat so that she can maintain her humanity. But every brain she eats, she also inherits their memories and must now solve their deaths with help from the Medical examiner and a police detective.\",\n" + 
-			"          \"backdrop_path\": \"/d2YDPTQPe3mI2LqBWwb0CchN54f.jpg\",\n" + 
-			"          \"vote_average\": 6.01,\n" + 
-			"          \"media_type\": \"tv\",\n" + 
-			"          \"first_air_date\": \"2015-03-17\",\n" + 
-			"          \"origin_country\": [\n" + 
-			"            \"US\"\n" + 
-			"          ],\n" + 
-			"          \"genre_ids\": [\n" + 
-			"            27,\n" + 
-			"            18,\n" + 
-			"            80,\n" + 
-			"            10765\n" + 
-			"          ],\n" + 
-			"          \"original_language\": \"en\",\n" + 
-			"          \"vote_count\": 69,\n" + 
-			"          \"name\": \"iZombie\",\n" + 
-			"          \"original_name\": \"iZombie\"\n" + 
-			"        }" +
-			"      ],\n" + 
-			"      \"name\": \"Bradley Hemmings\",\n" + 
-			"      \"popularity\": 1.273\n" + 
-			"    }\n" +
-			"	],\n" + 
-			"  \"total_results\": 1,\n" + 
-			"  \"total_pages\": 1\n" + 
-			"}";
-	
-	private static final String SEARCH_PEOPLE_RESPONSE_JSON_ERROR = "{" + 
-			"  \"status_message\": \"Invalid API key: You must be granted a valid key.\"," + 
-			"  \"success\": false," + 
-			"  \"status_code\": 7" + 
-			"}";
-
-	private String baseUrl = "http://localhost:8090";
-	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		stubFor(get(urlPathEqualTo("/search/person")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_PEOPLE_RESPONSE_JSON_SUCCESS)));
+		stub("/search/person", "search-people-success.json");
 		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -116,8 +40,7 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		stubFor(get(urlPathEqualTo("/search/person")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_PEOPLE_RESPONSE_JSON_ERROR)));
+		stub("/search/person", "search-error.json");
 		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("brad").page(0).language("en").includeAdult(true).region("US").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -131,8 +54,7 @@ public class PeopleSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		stubFor(get(urlPathEqualTo("/search/person")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("invalid json")));
+		stub("/search/person", "search-invalid.json");
 		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());

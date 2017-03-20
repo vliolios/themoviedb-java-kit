@@ -1,44 +1,15 @@
 package com.vliolios.tmdb.search;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class CollectionSearchTest {
+public class CollectionSearchTest extends WireMockTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-
-	private static final String SEARCH_COLLECTION_RESPONSE_JSON_SUCCESS = "{\n" + 
-			"  \"page\": 1,\n" + 
-			"  \"results\": [\n" + 
-			"    {\n" + 
-			"      \"id\": 9485,\n" + 
-			"      \"backdrop_path\": \"/z5A5W3WYJc3UVEWljSGwdjDgQ0j.jpg\",\n" + 
-			"      \"name\": \"The Fast and the Furious Collection\",\n" + 
-			"      \"poster_path\": \"/uv63yAGg1zETAs1XQsOQpava87l.jpg\"\n" + 
-			"    }\n" + 
-			"  ],\n" + 
-			"  \"total_pages\": 1,\n" + 
-			"  \"total_results\": 1\n" + 
-			"}";
-	
-	private static final String SEARCH_COLLECTION_RESPONSE_JSON_ERROR = "{" + 
-			"  \"status_message\": \"Invalid API key: You must be granted a valid key.\"," + 
-			"  \"success\": false," + 
-			"  \"status_code\": 7" + 
-			"}";
-
-	private String baseUrl = "http://localhost:8090";
-	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		stubFor(get(urlPathEqualTo("/search/collection")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_COLLECTION_RESPONSE_JSON_SUCCESS)));
+		stub("/search/collection", "search-collection-success.json");
 		Response<CollectionResult> response = CollectionSearch.apiKey("abc", baseUrl).query("star").page(0).language("en").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -58,8 +29,7 @@ public class CollectionSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		stubFor(get(urlPathEqualTo("/search/collection")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_COLLECTION_RESPONSE_JSON_ERROR)));
+		stub("/search/collection", "search-error.json");
 		Response<CollectionResult> response = CollectionSearch.apiKey("abc", baseUrl).query("star").page(0).language("en").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -73,8 +43,7 @@ public class CollectionSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		stubFor(get(urlPathEqualTo("/search/collection")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("invalid json")));
+		stub("/search/collection", "search-invalid.json");
 		Response<CollectionResult> response = CollectionSearch.apiKey("abc", baseUrl).query("star").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
