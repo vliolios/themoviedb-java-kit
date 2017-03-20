@@ -1,56 +1,15 @@
 package com.vliolios.tmdb.search;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class MovieSearchTest {
+public class MovieSearchTest extends WireMockTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-
-	private static final String SEARCH_MOVIE_RESPONSE_JSON_SUCCESS = "{\n" +
-			"	\"page\": 1," + 
-			"  \"results\": [" + 
-			"    {" + 
-			"      \"poster_path\": \"/pMdTc3kYCD1869UX6cdYUT8Xe49.jpg\",\n" +
-			"      \"adult\": false,\n" + 
-			"      \"overview\": \"Feature-length documentary about the rise of Marvel Studios and their films leading up to, and including, The Avengers\",\n" +
-			"      \"release_date\": \"2012-09-25\",\n" + 
-			"      \"genre_ids\": [\n" +
-			"        99\n" + 
-			"      ],\n" + 
-			"      \"id\": 161097,\n" +
-			"      \"original_title\": \"Marvel Studios: Building a Cinematic Universe\",\n" + 
-			"      \"original_language\": \"en\",\n" +
-			"      \"title\": \"Building a Cinematic Universe\",\n" + 
-			"      \"backdrop_path\": \"/yeKT2gNFxHGbTT3Htj5PE9IerGJ.jpg\",\n" +
-			"      \"popularity\": 1.136598,\n" +
-			"      \"vote_count\": 4,\n" +
-			"      \"video\": false,\n" + 
-			"      \"vote_average\": 3.88\n" +
-			"    }\n" + 
-			"  ],\n" + 
-			"  \"total_results\": 1,\n" + 
-			"  \"total_pages\": 1\n" + 
-			"}";
-	
-	private static final String SEARCH_MOVIE_RESPONSE_JSON_ERROR = "{" + 
-			"  \"status_message\": \"Invalid API key: You must be granted a valid key.\"," + 
-			"  \"success\": false," + 
-			"  \"status_code\": 7" + 
-			"}";
-
-	private String baseUrl = "http://localhost:8090";
-	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		stubFor(get(urlPathEqualTo("/search/movie")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_MOVIE_RESPONSE_JSON_SUCCESS)));
+		stub("/search/movie", "search-movie-success.json");
 		Response<MovieResult> response = MovieSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -81,8 +40,7 @@ public class MovieSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		stubFor(get(urlPathEqualTo("/search/movie")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_MOVIE_RESPONSE_JSON_ERROR)));
+		stub("/search/movie", "search-error.json");
 		Response<MovieResult> response = MovieSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").year(2000).primaryReleaseYear(1990).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -96,8 +54,7 @@ public class MovieSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		stubFor(get(urlPathEqualTo("/search/movie")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("invalid json")));
+		stub("/search/movie", "search-invalid.json");
 		Response<MovieResult> response = MovieSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());

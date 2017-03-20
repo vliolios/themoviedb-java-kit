@@ -5,7 +5,7 @@ This is a Java library for version 3 of the [API](https://www.themoviedb.org/doc
 *****
 
 ### Supported endpoints
-#####SEARCH
+##### SEARCH
 * Search Companies
 * Search Collections
 * Search Keywords

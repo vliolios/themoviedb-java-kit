@@ -36,7 +36,4 @@ public interface SearchService {
 	                                    @Query("language") String language, @Query("include_adult") Boolean includeAdult,
 	                                    @Query("region") String region);
 
-	@GET("api")
-	Call<String> api();
-
 }

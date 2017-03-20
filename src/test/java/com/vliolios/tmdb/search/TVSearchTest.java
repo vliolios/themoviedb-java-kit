@@ -1,59 +1,15 @@
 package com.vliolios.tmdb.search;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class TVSearchTest {
+public class TVSearchTest extends WireMockTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-
-	private static final String SEARCH_TV_RESPONSE_JSON_SUCCESS = "{" +
-			"  \"page\": 1," + 
-			"  \"results\": [" + 
-			"    {" + 
-			"      \"poster_path\": \"/jIhL6mlT7AblhbHJgEoiBIOUVl1.jpg\"," + 
-			"      \"popularity\": 29.780826," + 
-			"      \"id\": 1399," + 
-			"      \"backdrop_path\": \"/mUkuc2wyV9dHLG0D0Loaw5pO2s8.jpg\"," + 
-			"      \"vote_average\": 7.91," + 
-			"      \"overview\": \"Seven noble families fight for control of the mythical land of Westeros\"," + 
-			"      \"first_air_date\": \"2011-04-17\"," + 
-			"      \"origin_country\": [" + 
-			"        \"US\"" + 
-			"      ]," + 
-			"      \"genre_ids\": [" + 
-			"        10765," + 
-			"        10759," + 
-			"        18" + 
-			"      ]," + 
-			"      \"original_language\": \"en\"," + 
-			"      \"vote_count\": 1172," + 
-			"      \"name\": \"Game of Thrones\"," + 
-			"      \"original_name\": \"Game of Thrones\"" + 
-			"    }" + 
-			"  ]," + 
-			"  \"total_results\": 1," + 
-			"  \"total_pages\": 1" + 
-			"}";
-	
-	private static final String SEARCH_TV_RESPONSE_JSON_ERROR = "{" + 
-			"  \"status_message\": \"Invalid API key: You must be granted a valid key.\"," + 
-			"  \"success\": false," + 
-			"  \"status_code\": 7" + 
-			"}";
-
-	private String baseUrl = "http://localhost:8090";
-	
 	@Test
 	public void testSubmitResponseSuccessful() {
-		stubFor(get(urlPathEqualTo("/search/tv")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_TV_RESPONSE_JSON_SUCCESS)));
+		stub("/search/tv", "search-tv-success.json");
 		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
@@ -82,8 +38,7 @@ public class TVSearchTest {
 	
 	@Test
 	public void testSubmitResponseWithError() {
-		stubFor(get(urlPathEqualTo("/search/tv")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody(SEARCH_TV_RESPONSE_JSON_ERROR)));
+		stub("/search/tv", "search-error.json");
 		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
@@ -97,8 +52,7 @@ public class TVSearchTest {
 	
 	@Test
 	public void testSubmitResponseInvalid() {
-		stubFor(get(urlPathEqualTo("/search/tv")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("invalid json")));
+		stub("/search/tv", "search-invalid.json");
 		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
