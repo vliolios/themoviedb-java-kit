@@ -6,16 +6,14 @@ public class API {
 
 	private static final String DEFAULT_BASE_URL = "https://api.themoviedb.org/3/";
 
-	private String apiKey;
-	private String baseUrl;
+	private APIConfig apiConfig;
 
 	public API(String apiKey) {
 		this(apiKey, DEFAULT_BASE_URL);
 	}
 
 	API(String apiKey, String baseUrl) {
-		this.apiKey = apiKey;
-		this.baseUrl = baseUrl;
+		this.apiConfig = new APIConfig(apiKey, baseUrl);
 	}
 
 	public SearchSelector search() {
@@ -27,31 +25,31 @@ public class API {
 		private SearchSelector() {}
 
 		public SearchWithQuery<TVSearch.Builder> tv() {
-			return TVSearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return TVSearch.apiConfig(apiConfig);
 		}
 		
 		public SearchWithQuery<MovieSearch.Builder> movie() {
-			return MovieSearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return MovieSearch.apiConfig(apiConfig);
 		}
 		
 		public SearchWithQuery<CollectionSearch.Builder> collection() {
-			return CollectionSearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return CollectionSearch.apiConfig(apiConfig);
 		}
 		
 		public SearchWithQuery<KeywordSearch.Builder> keyword() {
-			return KeywordSearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return KeywordSearch.apiConfig(apiConfig);
 		}
 		
 		public SearchWithQuery<PeopleSearch.Builder> people() {
-			return PeopleSearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return PeopleSearch.apiConfig(apiConfig);
 		}
 		
 		public SearchWithQuery<MultiSearch.Builder> multi() {
-			return MultiSearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return MultiSearch.apiConfig(apiConfig);
 		}
 		
 		public SearchWithQuery<CompanySearch.Builder> company() {
-			return CompanySearch.apiConfig(new APIConfig(apiKey, baseUrl));
+			return CompanySearch.apiConfig(apiConfig);
 		}
 		
 	}
