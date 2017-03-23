@@ -1,8 +1,6 @@
 package com.vliolios.tmdb.search;
 
 
-import java.io.IOException;
-
 public class MovieSearch extends Search {
 	
 	private String language;
@@ -16,15 +14,7 @@ public class MovieSearch extends Search {
 	}
 
 	public Response<MovieResult> submit() {
-		try {
-			return getSearchService().movie(getApiKey(), getQuery(), getPage(), language, includeAdult, region, year, primaryReleaseYear).execute().body();
-		} catch (IOException e) {
-			Response<MovieResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.movie(getApiKey(), getQuery(), getPage(), language, includeAdult, region, year, primaryReleaseYear));
 	}
 
 	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {

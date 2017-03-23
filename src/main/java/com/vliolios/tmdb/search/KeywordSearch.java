@@ -1,7 +1,5 @@
 package com.vliolios.tmdb.search;
 
-import java.io.IOException;
-
 public class KeywordSearch extends Search {
 
 	private KeywordSearch(String apiKey, String baseUrl) {
@@ -9,15 +7,7 @@ public class KeywordSearch extends Search {
 	}
 
 	public Response<KeywordResult> submit() {
-		try {
-			return getSearchService().keyword(getApiKey(), getQuery(), getPage()).execute().body();
-		} catch (IOException e) {
-			Response<KeywordResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.keyword(getApiKey(), getQuery(), getPage()));
 	}
 
 	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {

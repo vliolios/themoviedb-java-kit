@@ -11,15 +11,7 @@ public class CollectionSearch extends Search {
 	}
 
 	public Response<CollectionResult> submit() {
-		try {
-			return getSearchService().collection(getApiKey(), getQuery(), getPage(), language).execute().body();
-		} catch (IOException e) {
-			Response<CollectionResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.collection(getApiKey(), getQuery(), getPage(), language));
 	}
 
 	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {

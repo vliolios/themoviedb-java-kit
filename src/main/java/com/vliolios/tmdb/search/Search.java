@@ -9,10 +9,12 @@ import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 public abstract class Search {
 
@@ -35,6 +37,19 @@ public abstract class Search {
     }
     
     public abstract Response submit();
+
+
+    protected <T> Response submit(Function<SearchService, Call<Response<T>>> searchServiceExecution) {
+	    try {
+		    return searchServiceExecution.apply(getSearchService()).execute().body();
+	    } catch (IOException e) {
+		    Response<T> invalidResponse = new Response<>();
+		    invalidResponse.setStatusCode(500);
+		    invalidResponse.setStatusMessage("Failed to parse the response body");
+		    invalidResponse.setSuccess(false);
+		    return invalidResponse;
+	    }
+    }
 
 	protected SearchService getSearchService() {
 		ObjectMapper mapper = getObjectMapper();

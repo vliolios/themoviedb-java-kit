@@ -1,7 +1,5 @@
 package com.vliolios.tmdb.search;
 
-import java.io.IOException;
-
 public class PeopleSearch extends Search {
 	
 	private String language;
@@ -13,15 +11,7 @@ public class PeopleSearch extends Search {
 	}
 
 	public Response<PeopleResult> submit() {
-		try {
-			return getSearchService().person(getApiKey(), getQuery(), getPage(), language, includeAdult, region).execute().body();
-		} catch (IOException e) {
-			Response<PeopleResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.person(getApiKey(), getQuery(), getPage(), language, includeAdult, region));
 	}
 
 	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {

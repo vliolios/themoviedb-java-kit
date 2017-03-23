@@ -1,7 +1,5 @@
 package com.vliolios.tmdb.search;
 
-import java.io.IOException;
-
 public class TVSearch extends Search {
 	
 	private String language;
@@ -26,15 +24,7 @@ public class TVSearch extends Search {
 
 	@Override
 	public Response<TVResult> submit() {
-		try {
-			return getSearchService().tv(getApiKey(), getQuery(), getPage(), language, firstAirDateYear).execute().body();
-		} catch (IOException e) {
-			Response<TVResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.tv(getApiKey(), getQuery(), getPage(), language, firstAirDateYear));
 	}
 
 	@Override
