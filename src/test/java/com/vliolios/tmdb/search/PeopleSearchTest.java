@@ -10,7 +10,7 @@ public class PeopleSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseSuccessful() {
 		stub("/search/person", "search-people-success.json");
-		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
+		Response<PeopleResult> response = PeopleSearch.apiConfig(apiConfig).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
@@ -41,7 +41,7 @@ public class PeopleSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseWithError() {
 		stub("/search/person", "search-error.json");
-		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("brad").page(0).language("en").includeAdult(true).region("US").build().submit();
+		Response<PeopleResult> response = PeopleSearch.apiConfig(apiConfig).query("brad").page(0).language("en").includeAdult(true).region("US").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -55,7 +55,7 @@ public class PeopleSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseInvalid() {
 		stub("/search/person", "search-invalid.json");
-		Response<PeopleResult> response = PeopleSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
+		Response<PeopleResult> response = PeopleSearch.apiConfig(apiConfig).query("matrix").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -68,31 +68,31 @@ public class PeopleSearchTest extends WireMockTest {
 	
 	@Test
 	public void testQuery() {
-		PeopleSearch search = PeopleSearch.apiKey("abc", baseUrl).query("Brad").build();
+		PeopleSearch search = PeopleSearch.apiConfig(apiConfig).query("Brad").build();
 		assertThat("The query is incorrect", search.getQuery(), is("Brad"));
 	}
 	
 	@Test
 	public void testPage() {
-		PeopleSearch search =PeopleSearch.apiKey("abc", baseUrl).query("Brad").page(1).build();
+		PeopleSearch search =PeopleSearch.apiConfig(apiConfig).query("Brad").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		PeopleSearch search =PeopleSearch.apiKey("abc", baseUrl).query("Brad").language("en").build();
+		PeopleSearch search =PeopleSearch.apiConfig(apiConfig).query("Brad").language("en").build();
 		assertThat("The language is incorrect", search.getLanguage(), is("en"));
 	}
 
 	@Test
 	public void testIncludeAdult() {
-		PeopleSearch search =PeopleSearch.apiKey("abc", baseUrl).query("Brad").includeAdult(true).build();
+		PeopleSearch search =PeopleSearch.apiConfig(apiConfig).query("Brad").includeAdult(true).build();
 		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), is(true));
 	}
 
 	@Test
 	public void testRegion() {
-		PeopleSearch search = PeopleSearch.apiKey("abc", baseUrl).query("Brad").region("US").build();
+		PeopleSearch search = PeopleSearch.apiConfig(apiConfig).query("Brad").region("US").build();
 		assertThat("The region is incorrect", search.getRegion(), is("US"));
 	}
 

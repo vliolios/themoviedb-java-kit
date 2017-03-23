@@ -1,6 +1,8 @@
 package com.vliolios.tmdb.search;
 
 
+import com.vliolios.tmdb.APIConfig;
+
 public class MovieSearch extends Search {
 	
 	private String language;
@@ -9,16 +11,16 @@ public class MovieSearch extends Search {
 	private Integer year;
 	private Integer  primaryReleaseYear;
 
-	private MovieSearch(String apiKey, String baseUrl) {
-		super(apiKey, baseUrl);
+	private MovieSearch(APIConfig apiConfig) {
+		super(apiConfig);
 	}
 
 	public Response<MovieResult> submit() {
 		return submit(searchService -> searchService.movie(getApiKey(), getQuery(), getPage(), language, includeAdult, region, year, primaryReleaseYear));
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
-		return new Builder(apiKey, baseUrl);
+	public static SearchWithQuery<Builder> apiConfig(APIConfig apiConfig) {
+		return new Builder(apiConfig);
 	}
 
 	public String getLanguage() {
@@ -49,8 +51,8 @@ public class MovieSearch extends Search {
 	public static class Builder implements SearchWithQuery<Builder> {
 		MovieSearch movieSearch;
 
-		private Builder(String apiKey, String baseUrl) {
-			this.movieSearch = new MovieSearch(apiKey, baseUrl);
+		private Builder(APIConfig apiConfig) {
+			this.movieSearch = new MovieSearch(apiConfig);
 		}
 
 		public Builder query(String query) {

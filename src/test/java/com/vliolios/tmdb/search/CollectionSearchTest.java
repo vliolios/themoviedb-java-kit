@@ -10,7 +10,7 @@ public class CollectionSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseSuccessful() {
 		stub("/search/collection", "search-collection-success.json");
-		Response<CollectionResult> response = CollectionSearch.apiKey("abc", baseUrl).query("star").page(0).language("en").build().submit();
+		Response<CollectionResult> response = CollectionSearch.apiConfig(apiConfig).query("star").page(0).language("en").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
@@ -30,7 +30,7 @@ public class CollectionSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseWithError() {
 		stub("/search/collection", "search-error.json");
-		Response<CollectionResult> response = CollectionSearch.apiKey("abc", baseUrl).query("star").page(0).language("en").build().submit();
+		Response<CollectionResult> response = CollectionSearch.apiConfig(apiConfig).query("star").page(0).language("en").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -44,7 +44,7 @@ public class CollectionSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseInvalid() {
 		stub("/search/collection", "search-invalid.json");
-		Response<CollectionResult> response = CollectionSearch.apiKey("abc", baseUrl).query("star").build().submit();
+		Response<CollectionResult> response = CollectionSearch.apiConfig(apiConfig).query("star").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -57,26 +57,26 @@ public class CollectionSearchTest extends WireMockTest {
 
 	@Test
 	public void testQuery() {
-		CollectionSearch search = CollectionSearch.apiKey("abc", baseUrl).query("star wars").build();
+		CollectionSearch search = CollectionSearch.apiConfig(apiConfig).query("star wars").build();
 
 		assertThat("The query is incorrect", search.getQuery(), is("star wars"));
 	}
 
 	@Test
 	public void testPage() {
-		CollectionSearch search = CollectionSearch.apiKey("abc", baseUrl).query("star wars").page(1).build();
+		CollectionSearch search = CollectionSearch.apiConfig(apiConfig).query("star wars").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		CollectionSearch search = CollectionSearch.apiKey("abc", baseUrl).query("star wars").language("en").build();
+		CollectionSearch search = CollectionSearch.apiConfig(apiConfig).query("star wars").language("en").build();
 		assertThat("The language is incorrect", search.getLanguage(), is("en"));
 	}
 
 	@Test
 	public void testGetType() {
-		CollectionSearch search = CollectionSearch.apiKey("abc", baseUrl).query("star wars").build();
+		CollectionSearch search = CollectionSearch.apiConfig(apiConfig).query("star wars").build();
 		assertThat("The type is incorrect", search.getType(), is("collection"));
 	}
 

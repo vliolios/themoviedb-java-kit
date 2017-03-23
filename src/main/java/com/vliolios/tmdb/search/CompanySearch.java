@@ -1,17 +1,19 @@
 package com.vliolios.tmdb.search;
 
+import com.vliolios.tmdb.APIConfig;
+
 public class CompanySearch extends Search {
 
-	private CompanySearch(String apiKey, String baseUrl) {
-		super(apiKey, baseUrl);
+	private CompanySearch(APIConfig apiConfig) {
+		super(apiConfig);
 	}
 
 	public Response<CompanyResult> submit() {
 		return submit(searchService -> searchService.company(getApiKey(), getQuery(), getPage()));
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
-		return new Builder(apiKey, baseUrl);
+	public static SearchWithQuery<Builder> apiConfig(APIConfig apiConfig   ) {
+		return new Builder(apiConfig);
 	}
 
 	@Override
@@ -22,8 +24,8 @@ public class CompanySearch extends Search {
 	public static class Builder implements SearchWithQuery<Builder> {
 		CompanySearch companySearch;
 
-		private Builder(String apiKey, String baseUrl) {
-			this.companySearch = new CompanySearch(apiKey, baseUrl);
+		private Builder(APIConfig apiConfig) {
+			this.companySearch = new CompanySearch(apiConfig);
 		}
 
 		public Builder query(String query) {

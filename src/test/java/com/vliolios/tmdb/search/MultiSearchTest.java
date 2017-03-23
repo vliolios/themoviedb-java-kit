@@ -10,7 +10,7 @@ public class MultiSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseSuccessful() {
 		stub("/search/multi", "search-multi-success.json");
-		Response<MultiResult> response = MultiSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
+		Response<MultiResult> response = MultiSearch.apiConfig(apiConfig).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 		
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
@@ -49,7 +49,7 @@ public class MultiSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseWithError() {
 		stub("/search/multi", "search-error.json");
-		Response<MultiResult> response = MultiSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
+		Response<MultiResult> response = MultiSearch.apiConfig(apiConfig).query("matrix").page(0).language("en").includeAdult(true).region("US").build().submit();
 		
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -63,7 +63,7 @@ public class MultiSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseInvalid() {
 		stub("/search/multi", "search-invalid.json");
-		Response<MultiResult> response = MultiSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
+		Response<MultiResult> response = MultiSearch.apiConfig(apiConfig).query("matrix").build().submit();
 		
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -76,37 +76,37 @@ public class MultiSearchTest extends WireMockTest {
 	
 	@Test
 	public void testQuery() {
-		MultiSearch search = MultiSearch.apiKey("abc", baseUrl).query("matrix").build();
+		MultiSearch search = MultiSearch.apiConfig(apiConfig).query("matrix").build();
 		assertThat("The query is incorrect", search.getQuery(), is("matrix"));
 	}
 	
 	@Test
 	public void testPage() {
-		MultiSearch search = MultiSearch.apiKey("abc", baseUrl).query("matrix").page(1).build();
+		MultiSearch search = MultiSearch.apiConfig(apiConfig).query("matrix").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 	
 	@Test
 	public void testLanguage() {
-		MultiSearch search = MultiSearch.apiKey("abc", baseUrl).query("matrix").language("en").build();
+		MultiSearch search = MultiSearch.apiConfig(apiConfig).query("matrix").language("en").build();
 		assertThat("The language is incorrect", search.getLanguage(), is("en"));
 	}
 
 	@Test
 	public void testIncludeAdult() {
-		MultiSearch search = MultiSearch.apiKey("abc", baseUrl).query("matrix").includeAdult(true).build();
+		MultiSearch search = MultiSearch.apiConfig(apiConfig).query("matrix").includeAdult(true).build();
 		assertThat("The include adult flag is incorrect", search.getIncludeAdult(), is(true));
 	}
 
 	@Test
 	public void testRegion() {
-		MultiSearch search = MultiSearch.apiKey("abc", baseUrl).query("matrix").region("US").build();
+		MultiSearch search = MultiSearch.apiConfig(apiConfig).query("matrix").region("US").build();
 		assertThat("The region is incorrect", search.getRegion(), is("US"));
 	}
 
 	@Test
 	public void testGetType() {
-		MultiSearch search = MultiSearch.apiKey("abc", baseUrl).query("matrix").build();
+		MultiSearch search = MultiSearch.apiConfig(apiConfig).query("matrix").build();
 		assertThat("The type is incorrect", search.getType(), is("multi"));
 	}
 

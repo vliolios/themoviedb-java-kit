@@ -1,17 +1,19 @@
 package com.vliolios.tmdb.search;
 
+import com.vliolios.tmdb.APIConfig;
+
 public class KeywordSearch extends Search {
 
-	private KeywordSearch(String apiKey, String baseUrl) {
-		super(apiKey, baseUrl);
+	private KeywordSearch(APIConfig apiConfig) {
+		super(apiConfig);
 	}
 
 	public Response<KeywordResult> submit() {
 		return submit(searchService -> searchService.keyword(getApiKey(), getQuery(), getPage()));
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
-		return new Builder(apiKey, baseUrl);
+	public static SearchWithQuery<Builder> apiConfig(APIConfig apiConfig) {
+		return new Builder(apiConfig);
 	}
 
 	@Override
@@ -22,8 +24,8 @@ public class KeywordSearch extends Search {
 	public static class Builder implements SearchWithQuery<Builder> {
 		KeywordSearch keywordSearch;
 
-		private Builder(String apiKey, String baseUrl) {
-			this.keywordSearch = new KeywordSearch(apiKey, baseUrl);
+		private Builder(APIConfig apiConfig) {
+			this.keywordSearch = new KeywordSearch(apiConfig);
 		}
 
 		public Builder query(String query) {
