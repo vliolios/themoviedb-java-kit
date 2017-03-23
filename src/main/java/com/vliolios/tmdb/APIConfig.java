@@ -1,8 +1,5 @@
 package com.vliolios.tmdb;
 
-/**
- * Created by vasileiosl on 23/03/2017.
- */
 public class APIConfig {
 
 	private String apiKey;

@@ -2,8 +2,6 @@ package com.vliolios.tmdb.search;
 
 import com.vliolios.tmdb.APIConfig;
 
-import java.io.IOException;
-
 public class CollectionSearch extends Search {
 
 	private String language;
