@@ -1,29 +1,23 @@
 package com.vliolios.tmdb.search;
 
+import com.vliolios.tmdb.APIConfig;
+
 import java.io.IOException;
 
 public class CollectionSearch extends Search {
 
 	private String language;
 	
-	private CollectionSearch(String apiKey, String baseUrl) {
-		super(apiKey, baseUrl);
+	private CollectionSearch(APIConfig apiConfig) {
+		super(apiConfig);
 	}
 
 	public Response<CollectionResult> submit() {
-		try {
-			return getSearchService().collection(getApiKey(), getQuery(), getPage(), language).execute().body();
-		} catch (IOException e) {
-			Response<CollectionResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.collection(getApiKey(), getQuery(), getPage(), language));
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
-		return new Builder(apiKey, baseUrl);
+	public static SearchWithQuery<Builder> apiConfig(APIConfig apiConfig) {
+		return new Builder(apiConfig);
 	}
 
 	public String getLanguage() {
@@ -38,8 +32,8 @@ public class CollectionSearch extends Search {
 	public static class Builder implements SearchWithQuery<Builder> {
 		CollectionSearch collectionSearch;
 
-		private Builder(String apiKey, String baseUrl) {
-			this.collectionSearch = new CollectionSearch(apiKey, baseUrl);
+		private Builder(APIConfig apiConfig) {
+			this.collectionSearch = new CollectionSearch(apiConfig);
 		}
 
 		public Builder query(String query) {

@@ -1,18 +1,18 @@
 package com.vliolios.tmdb.search;
 
-import java.io.IOException;
+import com.vliolios.tmdb.APIConfig;
 
 public class TVSearch extends Search {
 	
 	private String language;
 	private Integer firstAirDateYear;
 
-	private TVSearch(String apiKey, String baseUrl) {
-		super(apiKey, baseUrl);
+	private TVSearch(APIConfig apiConfig) {
+		super(apiConfig);
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
-		return new TVSearch.Builder(apiKey, baseUrl);
+	public static SearchWithQuery<Builder> apiConfig(APIConfig apiConfig) {
+		return new TVSearch.Builder(apiConfig);
 	}
 	
 	public String getLanguage() {
@@ -26,15 +26,7 @@ public class TVSearch extends Search {
 
 	@Override
 	public Response<TVResult> submit() {
-		try {
-			return getSearchService().tv(getApiKey(), getQuery(), getPage(), language, firstAirDateYear).execute().body();
-		} catch (IOException e) {
-			Response<TVResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.tv(getApiKey(), getQuery(), getPage(), language, firstAirDateYear));
 	}
 
 	@Override
@@ -45,8 +37,8 @@ public class TVSearch extends Search {
 	public static class Builder implements SearchWithQuery<Builder> {
 		TVSearch tvSearch;
 
-		private Builder(String apiKey, String baseUrl) {
-			this.tvSearch = new TVSearch(apiKey, baseUrl);
+		private Builder(APIConfig apiConfig) {
+			this.tvSearch = new TVSearch(apiConfig);
 		}
 
 		public Builder query(String query) {

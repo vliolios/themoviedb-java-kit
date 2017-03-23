@@ -1,6 +1,6 @@
 package com.vliolios.tmdb.search;
 
-import java.io.IOException;
+import com.vliolios.tmdb.APIConfig;
 
 public class MultiSearch extends Search {
 	
@@ -8,24 +8,16 @@ public class MultiSearch extends Search {
 	private Boolean includeAdult;
 	private String region;
 
-	private MultiSearch(String apiKey, String baseUrl) {
-		super(apiKey, baseUrl);
+	private MultiSearch(APIConfig apiConfig) {
+		super(apiConfig);
 	}
 
 	public Response<MultiResult> submit() {
-		try {
-			return getSearchService().multi(getApiKey(), getQuery(), getPage(), language, includeAdult, region).execute().body();
-		} catch (IOException e) {
-			Response<MultiResult> invalidResponse = new Response<>();
-			invalidResponse.setStatusCode(500);
-			invalidResponse.setStatusMessage("Failed to parse the response body");
-			invalidResponse.setSuccess(false);
-			return invalidResponse;
-		}
+		return submit(searchService -> searchService.multi(getApiKey(), getQuery(), getPage(), language, includeAdult, region));
 	}
 
-	public static SearchWithQuery<Builder> apiKey(String apiKey, String baseUrl) {
-		return new Builder(apiKey, baseUrl);
+	public static SearchWithQuery<Builder> apiConfig(APIConfig apiConfig) {
+		return new Builder(apiConfig);
 	}
 	
 	public String getLanguage() {
@@ -48,8 +40,8 @@ public class MultiSearch extends Search {
 	public static class Builder implements SearchWithQuery<Builder> {
 		MultiSearch multiSearch;
 
-		private Builder(String apiKey, String baseUrl) {
-			this.multiSearch = new MultiSearch(apiKey, baseUrl);
+		private Builder(APIConfig apiConfig) {
+			this.multiSearch = new MultiSearch(apiConfig);
 		}
 
 		public Builder query(String query) {

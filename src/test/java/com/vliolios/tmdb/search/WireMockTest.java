@@ -2,6 +2,7 @@ package com.vliolios.tmdb.search;
 
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.vliolios.tmdb.APIConfig;
 import org.junit.Before;
 import org.junit.Rule;
 
@@ -18,10 +19,12 @@ public class WireMockTest {
 	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicHttpsPort().dynamicPort());
 
 	protected String baseUrl;
+	protected APIConfig apiConfig;
 
 	@Before
 	public void setWireMockRuleBaseUrlUp() {
 		baseUrl = "http://localhost:" + wireMockRule.port();
+		apiConfig = new APIConfig("abc", baseUrl);
 	}
 
 	protected void stub(String urlPath, String responseFileName) {

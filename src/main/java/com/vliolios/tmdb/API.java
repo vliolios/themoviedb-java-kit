@@ -27,31 +27,31 @@ public class API {
 		private SearchSelector() {}
 
 		public SearchWithQuery<TVSearch.Builder> tv() {
-			return TVSearch.apiKey(apiKey,  baseUrl);
+			return TVSearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 		public SearchWithQuery<MovieSearch.Builder> movie() {
-			return MovieSearch.apiKey(apiKey, baseUrl);
+			return MovieSearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 		public SearchWithQuery<CollectionSearch.Builder> collection() {
-			return CollectionSearch.apiKey(apiKey, baseUrl);
+			return CollectionSearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 		public SearchWithQuery<KeywordSearch.Builder> keyword() {
-			return KeywordSearch.apiKey(apiKey, baseUrl);
+			return KeywordSearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 		public SearchWithQuery<PeopleSearch.Builder> people() {
-			return PeopleSearch.apiKey(apiKey, baseUrl);
+			return PeopleSearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 		public SearchWithQuery<MultiSearch.Builder> multi() {
-			return MultiSearch.apiKey(apiKey, baseUrl);
+			return MultiSearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 		public SearchWithQuery<CompanySearch.Builder> company() {
-			return CompanySearch.apiKey(apiKey, baseUrl);
+			return CompanySearch.apiConfig(new APIConfig(apiKey, baseUrl));
 		}
 		
 	}

@@ -10,7 +10,7 @@ public class KeywordSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseSuccessful() {
 		stub("/search/keyword", "search-keyword-success.json");
-		Response<KeywordResult> response = KeywordSearch.apiKey("abc", baseUrl).query("alien").page(0).build().submit();
+		Response<KeywordResult> response = KeywordSearch.apiConfig(apiConfig).query("alien").page(0).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
@@ -28,7 +28,7 @@ public class KeywordSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseWithError() {
 		stub("/search/keyword", "search-error.json");
-		Response<KeywordResult> response = KeywordSearch.apiKey("abc", baseUrl).query("alien").page(0).build().submit();
+		Response<KeywordResult> response = KeywordSearch.apiConfig(apiConfig).query("alien").page(0).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -42,7 +42,7 @@ public class KeywordSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseInvalid() {
 		stub("/search/keyword", "search-invalid.json");
-		Response<KeywordResult> response = KeywordSearch.apiKey("abc", baseUrl).query("alien").build().submit();
+		Response<KeywordResult> response = KeywordSearch.apiConfig(apiConfig).query("alien").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -55,19 +55,19 @@ public class KeywordSearchTest extends WireMockTest {
 
 	@Test
 	public void testQuery() {
-		KeywordSearch search = KeywordSearch.apiKey("abc", baseUrl).query("alien").build();
+		KeywordSearch search = KeywordSearch.apiConfig(apiConfig).query("alien").build();
 		assertThat("The query is incorrect", search.getQuery(), is("alien"));
 	}
 
 	@Test
 	public void testPage() {
-		KeywordSearch search = KeywordSearch.apiKey("abc", baseUrl).query("alien").page(1).build();
+		KeywordSearch search = KeywordSearch.apiConfig(apiConfig).query("alien").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 
 	@Test
 	public void testGetType() {
-		KeywordSearch search = KeywordSearch.apiKey("abc", baseUrl).query("alien").build();
+		KeywordSearch search = KeywordSearch.apiConfig(apiConfig).query("alien").build();
 		assertThat("The type is incorrect", search.getType(), is("keyword"));
 	}
 

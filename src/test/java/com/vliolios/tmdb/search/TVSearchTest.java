@@ -10,7 +10,7 @@ public class TVSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseSuccessful() {
 		stub("/search/tv", "search-tv-success.json");
-		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
+		Response<TVResult> response = TVSearch.apiConfig(apiConfig).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
@@ -39,7 +39,7 @@ public class TVSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseWithError() {
 		stub("/search/tv", "search-error.json");
-		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
+		Response<TVResult> response = TVSearch.apiConfig(apiConfig).query("matrix").page(0).language("en").firstAirDateYear(2000).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -53,7 +53,7 @@ public class TVSearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseInvalid() {
 		stub("/search/tv", "search-invalid.json");
-		Response<TVResult> response = TVSearch.apiKey("abc", baseUrl).query("matrix").build().submit();
+		Response<TVResult> response = TVSearch.apiConfig(apiConfig).query("matrix").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -66,35 +66,35 @@ public class TVSearchTest extends WireMockTest {
 
 	@Test
 	public void testQuery() {
-		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").build();
+		TVSearch search = TVSearch.apiConfig(apiConfig).query("westworld").build();
 
 		assertThat("The query is incorrect", search.getQuery(), is("westworld"));
 	}
 
 	@Test
 	public void testPage() {
-		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").page(1).build();
+		TVSearch search = TVSearch.apiConfig(apiConfig).query("westworld").page(1).build();
 
 		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 
 	@Test
 	public void testLanguage() {
-		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").language("en").build();
+		TVSearch search = TVSearch.apiConfig(apiConfig).query("westworld").language("en").build();
 
 		assertThat("The language is incorrect", search.getLanguage(), is("en"));
 	}
 
 	@Test
 	public void testFirstAidDateYear() {
-		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").firstAirDateYear(2000).build();
+		TVSearch search = TVSearch.apiConfig(apiConfig).query("westworld").firstAirDateYear(2000).build();
 
 		assertThat("The first air date year is incorrect", search.getFirstAirDateYear(), equalTo(2000));
 	}
 	
 	@Test
 	public void testGetType() {
-		TVSearch search = TVSearch.apiKey("abc", baseUrl).query("westworld").build();
+		TVSearch search = TVSearch.apiConfig(apiConfig).query("westworld").build();
 		
 		assertThat("The type is incorrect", search.getType(), is("tv"));
 	}

@@ -10,7 +10,7 @@ public class CompanySearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseSuccessful() {
 		stub("/search/company", "search-company-success.json");
-		Response<CompanyResult> response = CompanySearch.apiKey("abc", baseUrl).query("lucas").page(0).build().submit();
+		Response<CompanyResult> response = CompanySearch.apiConfig(apiConfig).query("lucas").page(0).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), is(1));
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), is(1));
@@ -29,7 +29,7 @@ public class CompanySearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseWithError() {
 		stub("/search/company", "search-error.json");
-		Response<CompanyResult> response = CompanySearch.apiKey("abc", baseUrl).query("lucas").page(0).build().submit();
+		Response<CompanyResult> response = CompanySearch.apiConfig(apiConfig).query("lucas").page(0).build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -43,7 +43,7 @@ public class CompanySearchTest extends WireMockTest {
 	@Test
 	public void testSubmitResponseInvalid() {
 		stub("/search/company", "search-invalid.json");
-		Response<CompanyResult> response = CompanySearch.apiKey("abc", baseUrl).query("lucas").build().submit();
+		Response<CompanyResult> response = CompanySearch.apiConfig(apiConfig).query("lucas").build().submit();
 
 		assertThat("The page value in the response is incorrect", response.getPage(), nullValue());
 		assertThat("The total pages value in the response is incorrect", response.getTotalPages(), nullValue());
@@ -56,19 +56,19 @@ public class CompanySearchTest extends WireMockTest {
 	
 	@Test
 	public void testQuery() {
-		CompanySearch search = CompanySearch.apiKey("abc", baseUrl).query("lucas").build();
+		CompanySearch search = CompanySearch.apiConfig(apiConfig).query("lucas").build();
 		assertThat("The query is incorrect", search.getQuery(), is("lucas"));
 	}
 
 	@Test
 	public void testPage() {
-		CompanySearch search = CompanySearch.apiKey("abc", baseUrl).query("lucas").page(1).build();
+		CompanySearch search = CompanySearch.apiConfig(apiConfig).query("lucas").page(1).build();
 		assertThat("The page is incorrect", search.getPage(), is(1));
 	}
 
 	@Test
 	public void testGetType() {
-		CompanySearch search = CompanySearch.apiKey("abc", baseUrl).query("lucas").build();
+		CompanySearch search = CompanySearch.apiConfig(apiConfig).query("lucas").build();
 		assertThat("The type is incorrect", search.getType(), is("company"));
 	}
 

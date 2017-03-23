@@ -5,26 +5,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import okhttp3.Interceptor;
+import com.vliolios.tmdb.APIConfig;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 public abstract class Search {
 
-	private String baseUrl;
-    private String apiKey;
+	private APIConfig apiConfig;
     private String query;
     private Integer page;
 
-    Search(String apiKey, String baseUrl) {
-    	this.apiKey = apiKey;
-    	this.baseUrl = baseUrl;
-    }
+	public Search(APIConfig apiConfig) {
+		this.apiConfig = apiConfig;
+	}
 
 	protected void query(String query) {
     	this.query = query;
@@ -35,6 +35,19 @@ public abstract class Search {
     }
     
     public abstract Response submit();
+
+
+    protected <T> Response submit(Function<SearchService, Call<Response<T>>> searchServiceExecution) {
+	    try {
+		    return searchServiceExecution.apply(getSearchService()).execute().body();
+	    } catch (IOException e) {
+		    Response<T> invalidResponse = new Response<>();
+		    invalidResponse.setStatusCode(500);
+		    invalidResponse.setStatusMessage("Failed to parse the response body");
+		    invalidResponse.setSuccess(false);
+		    return invalidResponse;
+	    }
+    }
 
 	protected SearchService getSearchService() {
 		ObjectMapper mapper = getObjectMapper();
@@ -47,7 +60,7 @@ public abstract class Search {
 
 	private Retrofit getRetrofit(ObjectMapper mapper, OkHttpClient okClient) {
 		return new Retrofit.Builder()
-					.baseUrl(baseUrl)
+					.baseUrl(apiConfig.getBaseUrl())
 					.client(okClient)
 					.addConverterFactory(JacksonConverterFactory.create(mapper))
 					.build();
@@ -74,7 +87,7 @@ public abstract class Search {
 	}
 
 	public String getApiKey() {
-		return apiKey;
+		return apiConfig.getApiKey();
 	}
 
 	public String getQuery() {
