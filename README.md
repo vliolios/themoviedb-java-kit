@@ -1,4 +1,4 @@
-# TheMovieDb Java Kit [![Build Status](https://travis-ci.org/vliolios/themoviedb-java-kit.svg?branch=master)](https://travis-ci.org/vliolios/themoviedb-java-kit) [![codecov](https://codecov.io/gh/vliolios/themoviedb-java-kit/branch/master/graph/badge.svg)](https://codecov.io/gh/vliolios/themoviedb-java-kit)
+# TheMovieDb Java Kit [![Build Status](https://travis-ci.org/vliolios/themoviedb-java-kit.svg?branch=master)](https://travis-ci.org/vliolios/themoviedb-java-kit) [![codecov](https://codecov.io/gh/vliolios/themoviedb-java-kit/branch/master/graph/badge.svg)](https://codecov.io/gh/vliolios/themoviedb-java-kit) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.vliolios/themoviedb-java-kit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.vliolios/themoviedb-java-kit)
 
 This is a Java library for version 3 of the [API](https://www.themoviedb.org/documentation/api) provided by [The Movie Database (TMDb)](https://www.themoviedb.org), a community built movie and TV database. 
 
@@ -15,6 +15,25 @@ This is a Java library for version 3 of the [API](https://www.themoviedb.org/doc
 * Search TV Shows 
 
 _For more details regarding the endpoints check the [TMDb API Documentation](https://developers.themoviedb.org/3/)._
+
+*****
+
+### Getting started
+
+You can find the latest themoviedb-java-kit release [here](https://github.com/vliolios/themoviedb-java-kit/releases) or you can add it as a dependency as follows:
+##### Maven
+```xml
+<dependency>
+    <groupId>com.vliolios</groupId>
+    <artifactId>themoviedb-java-kit</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+##### Gradle
+```
+compile 'com.vliolios:themoviedb-java-kit:0.1.0'
+```
 
 *****
 
